@@ -1,0 +1,53 @@
+{
+  "name": "beyond2c-platform",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "export": "next build && next export",
+    "deploy": "npm run build && touch out/.nojekyll",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "climate",
+    "activism",
+    "next.js",
+    "react",
+    "environment"
+  ],
+  "author": "Beyond2C Team",
+  "license": "MIT",
+  "description": "Beyond2C - Climate action platform connecting Gen Z with local governments",
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/d3": "^7.4.3",
+    "@types/leaflet": "^1.9.18",
+    "@types/node": "^24.0.1",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "aos": "^2.3.4",
+    "autoprefixer": "^10.4.21",
+    "d3": "^7.9.0",
+    "eslint": "^9.29.0",
+    "eslint-config-next": "^15.3.3",
+    "framer-motion": "^12.18.1",
+    "leaflet": "^1.9.4",
+    "mapbox-gl": "^3.12.0",
+    "next": "^15.3.3",
+    "postcss": "^8.5.5",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-leaflet": "^5.0.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/aos": "^3.0.7"
+  }
+}

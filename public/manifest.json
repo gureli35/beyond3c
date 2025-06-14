@@ -1,0 +1,21 @@
+{
+  "name": "Beyond2C",
+  "short_name": "Beyond2C",
+  "description": "İklim krizi için harekete geçmek — çok geç olmadan önce",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2D7D46",
+  "theme_color": "#2D7D46",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
