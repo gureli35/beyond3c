@@ -4,6 +4,8 @@ const nextConfig = {
   output: 'export',
   distDir: 'out',
   trailingSlash: true,
+  basePath: '/beyond2c-test',
+  assetPrefix: '/beyond2c-test/',
   images: {
     unoptimized: true,
     remotePatterns: [
