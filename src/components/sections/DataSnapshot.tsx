@@ -58,7 +58,7 @@ const DataSnapshot: React.FC = () => {
             className="font-montserrat font-bold text-4xl md:text-5xl mb-6 text-accent-500"
             data-aos="fade-up"
           >
-            {t('dataSnapshot.title')} <span className="text-gradient">Şu Anda</span>
+            {t('dataSnapshot.title')} <span className="text-gradient">{t('dataSnapshot.titleHighlight')}</span>
           </h2>
           <p 
             className="text-lg md:text-xl text-accent-500 max-w-3xl mx-auto"

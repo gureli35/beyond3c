@@ -300,8 +300,12 @@ const translations: Record<string, Record<Language, string>> = {
   
   // DataSnapshot
   'dataSnapshot.title': {
-    tr: 'İklim Krizi Şu Anda',
-    en: 'Climate Crisis Now',
+    tr: 'İklim Krizi',
+    en: 'Climate Crisis',
+  },
+  'dataSnapshot.titleHighlight': {
+    tr: 'Şu Anda',
+    en: 'Now',
   },
   'dataSnapshot.description': {
     tr: 'Gerçek ve güncel verilerle iklim krizinin ne boyutta birlikte bakalım',
