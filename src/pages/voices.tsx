@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
@@ -14,76 +14,126 @@ const formatDate = (dateString: string): string => {
   return `${day}.${month}.${year}`;
 };
 
-interface Story {
-  id: string;
+interface Voice {
+  _id: string;
   title: string;
-  excerpt: string;
-  content: string;
-  author: string;
-  location: string;
-  publishDate: string;
-  image: string;
+  excerpt?: string;
+  slug: string;
+  featuredImage?: string;
+  author: {
+    name: string;
+    age?: number;
+    location: {
+      city?: string;
+      region?: string;
+      country?: string;
+    };
+  };
+  category: string;
   tags: string[];
   featured: boolean;
+  storyType: string;
+  readingTime: number;
+  publishedAt: string;
+  views: number;
+  likes: number;
 }
 
 const VoicesPage: React.FC = () => {
   const [filter, setFilter] = useState('all');
+  const [voices, setVoices] = useState<Voice[]>([]);
+  const [featuredVoices, setFeaturedVoices] = useState<Voice[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const { language, t } = useLanguage();
 
-  const stories: Story[] = [
-    {
-      id: '1',
-      title: t('voices.story1Title'),
-      excerpt: t('voices.story1Excerpt'),
-      content: '',
-      author: language === 'tr' ? 'Elif Yılmaz' : 'Elif Yilmaz',
-      location: language === 'tr' ? 'İstanbul, Türkiye' : 'Istanbul, Turkey',
-      publishDate: '2024-05-15',
-      image: 'https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=500&q=80',
-      tags: [t('voices.categoryTransportation'), t('voices.categoryYouth'), t('voices.categoryMunicipality')],
-      featured: true,
-    },
-    {
-      id: '2',
-      title: t('voices.story2Title'),
-      excerpt: t('voices.story2Excerpt'),
-      content: '',
-      author: 'Mehmet Kaya',
-      location: language === 'tr' ? 'Konya, Türkiye' : 'Konya, Turkey',
-      publishDate: '2024-05-10',
-      image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=500&q=80',
-      tags: [t('voices.categoryEnergy'), t('voices.categoryRural'), t('voices.categorySolar')],
-      featured: false,
-    },
-    {
-      id: '3',
-      title: t('voices.story3Title'),
-      excerpt: t('voices.story3Excerpt'),
-      content: '',
-      author: language === 'tr' ? 'Zeynep Özkan' : 'Zeynep Ozkan',
-      location: language === 'tr' ? 'İzmir, Türkiye' : 'Izmir, Turkey',
-      publishDate: '2024-04-28',
-      image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500&q=80',
-      tags: [t('voices.categorySchool'), t('voices.categoryOrganic'), t('voices.categoryAwareness')],
-      featured: false,
-    }
-  ];
-
+  // Categories for filtering
   const categories = [
     'all',
-    t('voices.categoryYouth'),
-    t('voices.categoryEnergy'),
-    t('voices.categoryTransportation'),
-    t('voices.categoryEducation'),
-    t('voices.categoryTechnology')
+    'Youth',
+    'Energy',
+    'Transportation',
+    'Education',
+    'Technology'
   ];
-  
-  const filteredStories = filter === 'all' 
-    ? stories 
-    : stories.filter(story => story.tags.includes(filter));
 
-  const featuredStories = stories.filter(story => story.featured);
+  const getCategoryLabel = (category: string) => {
+    const labels: { [key: string]: string } = {
+      all: language === 'tr' ? 'Tümü' : 'All',
+      Youth: language === 'tr' ? 'Gençlik' : 'Youth',
+      Energy: language === 'tr' ? 'Enerji' : 'Energy',
+      Transportation: language === 'tr' ? 'Ulaşım' : 'Transportation',
+      Education: language === 'tr' ? 'Eğitim' : 'Education',
+      Technology: language === 'tr' ? 'Teknoloji' : 'Technology'
+    };
+    return labels[category] || category;
+  };
+
+  // Fetch voices from API
+  const fetchVoices = async (category = 'all', page = 1) => {
+    try {
+      setIsLoading(true);
+      const params = new URLSearchParams({
+        limit: '9',
+        page: page.toString(),
+        sortBy: 'publishedAt',
+        sortOrder: 'desc'
+      });
+      
+      if (category !== 'all') {
+        params.append('category', category);
+      }
+
+      const response = await fetch(`/api/voices?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        setVoices(data.data || []);
+        setTotalPages(data.pagination?.pages || 1);
+      } else {
+        console.error('Failed to fetch voices');
+      }
+    } catch (error) {
+      console.error('Error fetching voices:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch featured voices
+  const fetchFeaturedVoices = async () => {
+    try {
+      const response = await fetch('/api/voices?featured=true&limit=6');
+      if (response.ok) {
+        const data = await response.json();
+        setFeaturedVoices(data.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching featured voices:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeaturedVoices();
+    fetchVoices(filter, currentPage);
+  }, [filter, currentPage]);
+
+  const handleCategoryFilter = (category: string) => {
+    setFilter(category);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const formatLocation = (location: { city?: string; region?: string; country?: string }) => {
+    const parts = [];
+    if (location.city) parts.push(location.city);
+    if (location.region) parts.push(location.region);
+    if (location.country) parts.push(location.country);
+    return parts.join(', ');
+  };
 
   return (
     <Layout
@@ -147,62 +197,84 @@ const VoicesPage: React.FC = () => {
             <div className="w-24 h-1 bg-primary-500 mx-auto"></div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {featuredStories.map((story, index) => (
-              <div 
-                key={story.id}
-                className="propaganda-box transform hover:-translate-y-2 hover:shadow-lg transition-all duration-300 h-full flex flex-col"
-                data-aos="fade-up"
-                data-aos-delay={index * 100}
-              >
-                <div className="relative overflow-hidden h-48">
-                  <img 
-                    src={story.image} 
-                    alt={story.title} 
-                    className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-0 right-0 bg-primary-500 text-white px-3 py-1 font-bold text-sm uppercase">
-                    {story.location.split(',')[0]}
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+              {[...Array(6)].map((_, index) => (
+                <div 
+                  key={index}
+                  className="propaganda-box animate-pulse h-full flex flex-col"
+                >
+                  <div className="bg-secondary-600 h-48"></div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <div className="h-4 bg-secondary-600 mb-3 w-1/2"></div>
+                    <div className="h-6 bg-secondary-600 mb-3"></div>
+                    <div className="h-16 bg-secondary-600 mb-4 flex-1"></div>
+                    <div className="h-4 bg-secondary-600"></div>
                   </div>
                 </div>
-                
-                <div className="p-5 flex-1 flex flex-col">
-                  <div className="mb-3">
-                    {story.tags.slice(0, 2).map((tag) => (
-                      <span 
-                        key={tag}
-                        className="inline-block bg-primary-500 text-white text-xs font-bold px-3 py-1 mr-2 uppercase tracking-wider"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+              {featuredVoices.map((voice, index) => (
+                <div 
+                  key={voice._id}
+                  className="propaganda-box transform hover:-translate-y-2 hover:shadow-lg transition-all duration-300 h-full flex flex-col"
+                  data-aos="fade-up"
+                  data-aos-delay={index * 100}
+                >
+                  <div className="relative overflow-hidden h-48">
+                    <img 
+                      src={voice.featuredImage || '/images/default-voice.jpg'} 
+                      alt={voice.title} 
+                      className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute top-0 right-0 bg-primary-500 text-white px-3 py-1 font-bold text-sm uppercase">
+                      {voice.author.location.city || voice.author.location.region || voice.author.location.country || 'Unknown'}
+                    </div>
                   </div>
                   
-                  <h3 className="text-xl font-bold mb-3 text-accent-500 border-diagonal">
-                    {story.title}
-                  </h3>
-                  
-                  <p className="text-accent-500 mb-4 flex-1">
-                    {story.excerpt}
-                  </p>
-                  
-                  <div className="mt-auto">
-                    <div className="flex items-center justify-between text-sm border-t border-primary-500 pt-3">
-                      <span className="font-bold text-primary-500">{story.author}</span>
-                      <span className="text-accent-500">{formatDate(story.publishDate)}</span>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <div className="mb-3">
+                      {voice.tags.slice(0, 2).map((tag) => (
+                        <span 
+                          key={tag}
+                          className="inline-block bg-primary-500 text-white text-xs font-bold px-3 py-1 mr-2 uppercase tracking-wider"
+                        >
+                          {tag}
+                        </span>
+                      ))}
                     </div>
                     
-                    <Link 
-                      href={`/voices/${story.id}`} 
-                      className="mt-4 inline-block text-primary-500 hover:text-accent-500 font-bold uppercase text-sm tracking-wider"
-                    >
-                      {t('voices.readStory')} &rarr;
-                    </Link>
+                    <h3 className="text-xl font-bold mb-3 text-accent-500 border-diagonal">
+                      {voice.title}
+                    </h3>
+                    
+                    <p className="text-accent-500 mb-4 flex-1">
+                      {voice.excerpt || 'No excerpt available'}
+                    </p>
+                    
+                    <div className="mt-auto">
+                      <div className="flex items-center justify-between text-sm border-t border-primary-500 pt-3">
+                        <span className="font-bold text-primary-500">
+                          {voice.author.name}
+                          {voice.author.age && `, ${voice.author.age}`}
+                        </span>
+                        <span className="text-accent-500">{formatDate(voice.publishedAt)}</span>
+                      </div>
+                      
+                      <Link 
+                        href={`/voices/${voice.slug}`} 
+                        className="mt-4 inline-block text-primary-500 hover:text-accent-500 font-bold uppercase text-sm tracking-wider"
+                      >
+                        {t('voices.readStory')} &rarr;
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -221,82 +293,145 @@ const VoicesPage: React.FC = () => {
                 {categories.map((category) => (
                   <button
                     key={category}
-                    onClick={() => setFilter(category)}
+                    onClick={() => handleCategoryFilter(category)}
                     className={`px-6 py-3 font-bold uppercase tracking-wider transition-all duration-200 ${
                       filter === category
                         ? 'bg-primary-500 text-white'
                         : 'bg-secondary-700 text-accent-500 hover:bg-secondary-600 border border-primary-500'
                     }`}
                   >
-                    {category === 'all' ? t('voices.allCategory') : category}
+                    {getCategoryLabel(category)}
                   </button>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredStories.map((story, index) => (                <div 
-                key={story.id}
-                className="bg-secondary-700 border-l-4 border-primary-500 shadow-lg transform hover:-translate-y-2 hover:shadow-xl transition-all duration-300 h-full flex flex-col"
-                data-aos="fade-up"
-                data-aos-delay={index * 100}
-              >
-                <div className="relative overflow-hidden h-48">
-                  <img 
-                    src={story.image} 
-                    alt={story.title} 
-                    className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-0 right-0 bg-primary-500 text-white px-3 py-1 font-bold text-sm uppercase">
-                    {story.location.split(',')[0]}
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(9)].map((_, index) => (
+                <div 
+                  key={index}
+                  className="bg-secondary-700 border-l-4 border-primary-500 shadow-lg animate-pulse h-full flex flex-col"
+                >
+                  <div className="bg-secondary-600 h-48"></div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <div className="h-4 bg-secondary-600 mb-3 w-1/2"></div>
+                    <div className="h-6 bg-secondary-600 mb-3"></div>
+                    <div className="h-16 bg-secondary-600 mb-4 flex-1"></div>
+                    <div className="h-4 bg-secondary-600"></div>
                   </div>
                 </div>
-                
-                <div className="p-5 flex-1 flex flex-col">
-                  <div className="mb-3">
-                    {story.tags.slice(0, 2).map((tag) => (
-                      <span 
-                        key={tag}
-                        className="inline-block bg-primary-500 text-white text-xs font-bold px-3 py-1 mr-2 uppercase tracking-wider"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {voices.map((voice, index) => (
+                <div 
+                  key={voice._id}
+                  className="bg-secondary-700 border-l-4 border-primary-500 shadow-lg transform hover:-translate-y-2 hover:shadow-xl transition-all duration-300 h-full flex flex-col"
+                  data-aos="fade-up"
+                  data-aos-delay={index * 100}
+                >
+                  <div className="relative overflow-hidden h-48">
+                    <img 
+                      src={voice.featuredImage || '/images/default-voice.jpg'} 
+                      alt={voice.title} 
+                      className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute top-0 right-0 bg-primary-500 text-white px-3 py-1 font-bold text-sm uppercase">
+                      {voice.author.location.city || voice.author.location.region || voice.author.location.country || 'Unknown'}
+                    </div>
                   </div>
                   
-                  <h3 className="text-xl font-bold mb-3 text-accent-500">
-                    {story.title}
-                  </h3>
-                  
-                  <p className="text-accent-500 opacity-80 mb-4 flex-1 text-sm">
-                    {story.excerpt}
-                  </p>
-                  
-                  <div className="mt-auto">
-                    <div className="flex items-center justify-between text-sm border-t border-primary-500 pt-3">
-                      <span className="font-bold text-primary-500">{story.author}</span>
-                      <span className="text-accent-500">{formatDate(story.publishDate)}</span>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <div className="mb-3">
+                      {voice.tags.slice(0, 2).map((tag) => (
+                        <span 
+                          key={tag}
+                          className="inline-block bg-primary-500 text-white text-xs font-bold px-3 py-1 mr-2 uppercase tracking-wider"
+                        >
+                          {tag}
+                        </span>
+                      ))}
                     </div>
                     
-                    <Link 
-                      href={`/voices/${story.id}`} 
-                      className="mt-4 inline-block text-primary-500 hover:text-accent-500 font-bold uppercase text-sm tracking-wider"
-                    >
-                      {t('voices.readStory')} &rarr;
-                    </Link>
+                    <h3 className="text-xl font-bold mb-3 text-accent-500">
+                      {voice.title}
+                    </h3>
+                    
+                    <p className="text-accent-500 opacity-80 mb-4 flex-1 text-sm">
+                      {voice.excerpt || 'No excerpt available'}
+                    </p>
+                    
+                    <div className="mt-auto">
+                      <div className="flex items-center justify-between text-sm border-t border-primary-500 pt-3">
+                        <span className="font-bold text-primary-500">
+                          {voice.author.name}
+                          {voice.author.age && `, ${voice.author.age}`}
+                        </span>
+                        <span className="text-accent-500">{formatDate(voice.publishedAt)}</span>
+                      </div>
+                      
+                      <Link 
+                        href={`/voices/${voice.slug}`} 
+                        className="mt-4 inline-block text-primary-500 hover:text-accent-500 font-bold uppercase text-sm tracking-wider"
+                      >
+                        {t('voices.readStory')} &rarr;
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
-          {/* Load More */}
-          <div className="text-center mt-16">
-            <Button variant="primary" size="large" className="px-8 py-4 font-bold uppercase tracking-wider">
-              {t('voices.loadMoreStories')}
-            </Button>
-          </div>
+          {/* Pagination */}
+          {!isLoading && totalPages > 1 && (
+            <div className="flex justify-center items-center mt-16 gap-4">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 font-bold uppercase tracking-wider transition-all duration-200 ${
+                  currentPage === 1
+                    ? 'bg-secondary-600 text-accent-600 cursor-not-allowed'
+                    : 'bg-primary-500 text-white hover:bg-primary-600'
+                }`}
+              >
+                ← {language === 'tr' ? 'Önceki' : 'Previous'}
+              </button>
+              
+              <span className="text-accent-500 font-bold">
+                {currentPage} / {totalPages}
+              </span>
+              
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-4 py-2 font-bold uppercase tracking-wider transition-all duration-200 ${
+                  currentPage === totalPages
+                    ? 'bg-secondary-600 text-accent-600 cursor-not-allowed'
+                    : 'bg-primary-500 text-white hover:bg-primary-600'
+                }`}
+              >
+                {language === 'tr' ? 'Sonraki' : 'Next'} →
+              </button>
+            </div>
+          )}
+
+          {/* Load More Button (optional, keeping for design consistency) */}
+          {!isLoading && voices.length === 0 && (
+            <div className="text-center mt-16">
+              <p className="text-accent-500 text-lg mb-8">
+                {language === 'tr' ? 'Henüz bu kategoride hikaye bulunmuyor.' : 'No stories found in this category yet.'}
+              </p>
+              <Link href="/contact">
+                <Button variant="primary" size="large" className="px-8 py-4 font-bold uppercase tracking-wider">
+                  {t('voices.submitStory')}
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 

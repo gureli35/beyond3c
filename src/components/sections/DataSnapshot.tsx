@@ -51,17 +51,17 @@ const DataSnapshot: React.FC = () => {
   ];
 
   return (
-    <section className="section-padding bg-black">
-      <div className="container-custom">
-        <div className="text-center mb-16">
+    <section className="py-16 bg-black">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
           <h2 
-            className="font-montserrat font-bold text-4xl md:text-5xl mb-6 text-accent-500"
+            className="font-montserrat font-bold text-3xl md:text-4xl mb-4 text-white"
             data-aos="fade-up"
           >
-            {t('dataSnapshot.title')} <span className="text-gradient">{t('dataSnapshot.titleHighlight')}</span>
+            {t('dataSnapshot.title')} <span className="text-primary-500 bg-gradient-to-r from-primary to-red-600 bg-clip-text text-transparent">{t('dataSnapshot.titleHighlight')}</span>
           </h2>
           <p 
-            className="text-lg md:text-xl text-accent-500 max-w-3xl mx-auto"
+            className="text-base md:text-lg text-gray-300 max-w-2xl mx-auto"
             data-aos="fade-up"
             data-aos-delay="200"
           >
@@ -69,27 +69,27 @@ const DataSnapshot: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           {statCards.map((stat, index) => (
             <div
               key={stat.title}
               data-aos="fade-up"
               data-aos-delay={300 + index * 100}
-              className="card text-center"
+              className="bg-gradient-to-br from-gray-900 to-black rounded-lg shadow-lg shadow-red-900/20 p-4 text-center border border-gray-800 hover:border-primary-500 transition-all duration-300"
             >
-              <div className={`text-4xl md:text-5xl font-bold mb-2 ${stat.color}`}>
+              <div className={`text-3xl md:text-4xl font-bold mb-2 ${stat.color === 'text-green-600' ? 'text-primary-400' : 'text-primary-500'}`}>
                 {stat.value}
                 {stat.trend === 'up' && (
-                  <span className="text-red-500 text-2xl ml-2">↗</span>
+                  <span className="text-red-500 text-xl ml-1">↗</span>
                 )}
                 {stat.trend === 'down' && (
-                  <span className="text-red-500 text-2xl ml-2">↘</span>
+                  <span className="text-red-500 text-xl ml-1">↘</span>
                 )}
               </div>
-              <h3 className="font-montserrat font-semibold text-lg mb-2 text-accent-500">
+              <h3 className="font-montserrat font-semibold text-lg mb-2 text-white">
                 {stat.title}
               </h3>
-              <p className="text-accent-500 text-sm">
+              <p className="text-gray-300 text-sm">
                 {stat.description}
               </p>
             </div>
@@ -98,19 +98,19 @@ const DataSnapshot: React.FC = () => {
 
         <div className="text-center mt-12">
           <div 
-            className="propaganda-box transform skew-x-0 max-w-4xl mx-auto"
+            className="bg-gradient-to-r from-red-900 to-black p-6 rounded-lg border border-red-800 max-w-4xl mx-auto"
             data-aos="fade-up"
             data-aos-delay="700"
           >
-            <h3 className="font-montserrat font-semibold text-xl mb-3 text-accent-500">
+            <h3 className="font-montserrat font-semibold text-xl mb-3 text-white">
               {t('dataSnapshot.emergency')}
             </h3>
-            <p className="text-accent-500 mb-4">
+            <p className="text-gray-300 mb-4">
               {t('dataSnapshot.parisAgreement')}
             </p>
             <a 
               href="/data-hub" 
-              className="text-primary-500 hover:text-accent-500 font-medium underline"
+              className="text-primary-400 hover:text-primary-300 font-medium underline transition-colors duration-300"
             >
               {t('dataSnapshot.exploreData')}
             </a>

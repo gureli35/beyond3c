@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { useLanguage } from '@/context/LanguageContext';
 
-// Helper function for consistent date formatting
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   const day = date.getDate().toString().padStart(2, '0');
@@ -14,16 +13,25 @@ const formatDate = (dateString: string): string => {
 };
 
 interface BlogPost {
-  id: string;
+  _id: string;
   title: string;
   excerpt: string;
-  content: string;
-  author: string;
-  publishDate: string;
-  image: string;
+  content?: string;
+  author: {
+    firstName?: string;
+    lastName?: string;
+    username?: string;
+    name?: string;
+  };
+  publishedAt: string;
+  image?: string;
+  featuredImage?: string;
   category: string;
-  tags: string[];
-  featured: boolean;
+  tags?: string[];
+  featured?: boolean;
+  slug: string;
+  readingTime?: number;
+  views?: number;
 }
 
 const BlogPage: React.FC = () => {
@@ -31,169 +39,98 @@ const BlogPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { t } = useLanguage();
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const { t, language } = useLanguage();
   const postsPerPage = 6;
 
-  // Mock data for blog posts
-  const blogPosts: BlogPost[] = [
-    {
-      id: 'post-1',
-      title: 'İklim Değişikliğinin Türkiye\'ye Etkileri: Son Araştırmalar',
-      excerpt: 'Yeni bilimsel çalışmalar, iklim değişikliğinin Türkiye üzerindeki etkilerinin beklenenden daha hızlı gerçekleştiğini gösteriyor.',
-      content: '',
-      author: 'Dr. Ahmet Yılmaz',
-      publishDate: '2024-06-10',
-      image: 'https://images.unsplash.com/photo-1500740516770-92bd004b159e?w=800&q=80',
-      category: 'Bilim',
-      tags: ['Türkiye', 'Araştırma', 'Kuraklık'],
-      featured: true,
-    },
-    {
-      id: 'post-2',
-      title: 'Genç Aktivistler İçin Sürdürülebilir Yaşam Rehberi',
-      excerpt: 'Günlük hayatınızda uygulayabileceğiniz, karbon ayak izinizi azaltacak basit ama etkili yöntemler.',
-      content: '',
-      author: 'Zeynep Demir',
-      publishDate: '2024-06-05',
-      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80',
-      category: 'Yaşam',
-      tags: ['Sürdürülebilirlik', 'Gençlik', 'Günlük Yaşam'],
-      featured: true,
-    },
-    {
-      id: 'post-3',
-      title: 'İklim Dostu Teknolojiler: 2024 Yılının Öne Çıkanları',
-      excerpt: 'Yenilenebilir enerji, enerji depolama ve karbon yakalama alanlarında devrim yaratacak yeni teknolojiler.',
-      content: '',
-      author: 'Mehmet Kaya',
-      publishDate: '2024-05-28',
-      image: 'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&q=80',
-      category: 'Teknoloji',
-      tags: ['İnovasyon', 'Yenilenebilir Enerji', 'Karbon Yakalama'],
-      featured: false,
-    },
-    {
-      id: 'post-4',
-      title: 'Paris İklim Anlaşması: Neredeyiz, Nereye Gidiyoruz?',
-      excerpt: 'Paris Anlaşması\'nın imzalanmasından bu yana geçen sürede küresel emisyonlar ve ülkelerin taahhütlerine bakış.',
-      content: '',
-      author: 'Prof. Dr. Ayşe Yalçın',
-      publishDate: '2024-05-20',
-      image: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&q=80',
-      category: 'Politika',
-      tags: ['Paris Anlaşması', 'Uluslararası', 'Emisyonlar'],
-      featured: false,
-    },
-    {
-      id: 'post-5',
-      title: 'İklim Krizinde Belediyeler: Yerel Yönetimlerin Rolü',
-      excerpt: 'Şehirlerin iklim değişikliği ile mücadelede öncü rol oynamasının önemi ve başarılı yerel projeler.',
-      content: '',
-      author: 'Ceren Aksoy',
-      publishDate: '2024-05-15',
-      image: 'https://images.unsplash.com/photo-1544988215-52ced6fc8933?w=800&q=80',
-      category: 'Politika',
-      tags: ['Belediyeler', 'Şehirler', 'Yerel Yönetim'],
-      featured: false,
-    },
-    {
-      id: 'post-6',
-      title: 'İklim Aktivizminde Sosyal Medyanın Gücü',
-      excerpt: 'Dijital platformların iklim hareketi ve toplumsal farkındalık yaratmadaki etkisi nasıl artırılabilir?',
-      content: '',
-      author: 'Burak Kılıç',
-      publishDate: '2024-05-08',
-      image: 'https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?w=800&q=80',
-      category: 'Aktivizm',
-      tags: ['Sosyal Medya', 'Dijital Kampanyalar', 'Gençlik'],
-      featured: false,
-    },
-  ];
-
-  // Extract unique categories from blog posts
-  const categories = ['all', ...Array.from(new Set(blogPosts.map(post => post.category)))];
-  
-  // Function to get translated category name
-  const getCategoryName = (category: string): string => {
-    switch (category) {
-      case 'all': return t('common.all');
-      case 'Bilim': return t('blog.categories.science');
-      case 'Yaşam': return t('blog.categories.lifestyle');
-      case 'Teknoloji': return t('blog.categories.technology');
-      case 'Politika': return t('blog.categories.politics');
-      case 'Aktivizm': return t('blog.categories.activism');
-      default: return category;
+  // Function to translate blog categories
+  const translateCategory = (category: string): string => {
+    const categoryMap: { [key: string]: { tr: string; en: string } } = {
+      'SÜRDÜRÜLEBİLİRLİK': { tr: 'SÜRDÜRÜLEBİLİRLİK', en: 'SUSTAINABILITY' },
+      'İKLİM DEĞİŞİKLİĞİ': { tr: 'İKLİM DEĞİŞİKLİĞİ', en: 'CLIMATE CHANGE' },
+      'CLİMATE': { tr: 'İKLİM', en: 'CLIMATE' },
+      'ÇEVRE KORUMA': { tr: 'ÇEVRE KORUMA', en: 'ENVIRONMENTAL PROTECTION' }
+    };
+    const translation = categoryMap[category];
+    if (translation) {
+      return language === 'tr' ? translation.tr : translation.en;
     }
+    return category; // Return original if no translation found
   };
 
-  // Filter posts based on category and search query
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setIsLoading(true);
+      try {
+        const res = await fetch('/api/blogs');
+        const data = await res.json();
+        if (data.success) {
+          setBlogPosts(data.data);
+        }
+      } catch (e) {
+        // Hata yönetimi
+      }
+      setIsLoading(false);
+    };
+    fetchPosts();
+  }, []);
+
+  // Kategorileri API'den gelen postlardan çıkar
+  const categories = ['all', ...Array.from(new Set(blogPosts.map(post => post.category)))];
+
+  // Filtreleme
   const filteredPosts = blogPosts.filter(post => {
     const matchesCategory = activeCategory === 'all' || post.category === activeCategory;
-    const matchesSearch = searchQuery === '' || 
+    const matchesSearch =
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
-  // Get current posts for pagination
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+  const paginatedPosts = filteredPosts.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage);
 
-  const featuredPosts = blogPosts.filter(post => post.featured);
-
-  // Handle page change
-  const paginate = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo({ top: 800, behavior: 'smooth' });
-  };
-
-  // Handle search
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleCategoryClick = (categoryId: string) => {
+    setActiveCategory(categoryId);
     setCurrentPage(1);
-    setIsLoading(true);
-    
-    // Simulate loading state
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
   };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Featured postlar (örnek: ilk 2 postu featured göster)
+  const featuredPosts = blogPosts.slice(0, 2);
 
   return (
-    <Layout
-      title="Blog - Beyond2C"
-      description="İklim krizi, sürdürülebilirlik ve aktivizm hakkında güncel yazılar, analizler ve rehberler."
+    <Layout 
+      title={language === 'tr' ? 'Blog - Beyond2C' : 'Blog - Beyond2C'} 
+      description={language === 'tr' 
+        ? 'İklim krizi, sürdürülebilirlik ve aktivizm hakkında güncel yazılar, analizler ve rehberler. Uzmanlar ve aktivistlerden en son gelişmeler.'
+        : 'Current articles, analysis and guides on climate crisis, sustainability and activism. Latest developments from experts and activists.'
+      }
+      keywords={language === 'tr' 
+        ? ['iklim değişikliği blog', 'çevre makaleleri', 'sürdürülebilirlik yazıları', 'iklim haberleri', 'çevre aktivizmi', 'yeşil yaşam rehberleri']
+        : ['climate change blog', 'environmental articles', 'sustainability articles', 'climate news', 'environmental activism', 'green living guides']
+      }
+      type="website"
+      locale={language === 'tr' ? 'tr_TR' : 'en_US'}
+      alternateLocales={language === 'tr' ? ['en_US'] : ['tr_TR']}
+      url="/blog"
     >
       {/* Hero Section */}
       <section className="hero-gradient text-white section-padding relative overflow-hidden">
-        <div className="absolute inset-0 bg-pattern opacity-10"></div>
         <div className="container-custom relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="propaganda-banner mb-8 inline-block" data-aos="fade-down">
-             {formatDate('2024-06-14')}
-            </div>
-            
-            <h1 
-              className="font-montserrat font-black text-5xl md:text-7xl mb-8 text-shadow-red tracking-tight leading-tight uppercase"
-              data-aos="fade-up"
-            >
+            <h1 className="font-montserrat font-black text-5xl md:text-7xl mb-8 text-shadow-red tracking-tight leading-tight uppercase">
               <span className="text-white">BEYOND</span><span className="text-primary-500">BLOG</span>
             </h1>
-            
-            <div className="bg-secondary-900 p-4 mb-8 inline-block transform -skew-x-6 border-l-4 border-primary-500" data-aos="fade-up" data-aos-delay="200">
-              <p className="text-xl md:text-2xl font-bold text-accent-500 transform skew-x-6">
-                {t('blog.latestDevelopments')}
-              </p>
-            </div>
-            
-            <p 
-              className="text-lg md:text-xl mb-10 text-accent-500 max-w-3xl mx-auto border-diagonal"
-              data-aos="fade-up"
-              data-aos-delay="300"
-            >
+            <p className="text-lg md:text-xl mb-10 text-white max-w-3xl mx-auto border-diagonal">
               {t('blog.description')}
             </p>
           </div>
@@ -204,53 +141,30 @@ const BlogPage: React.FC = () => {
       <section className="section-padding bg-black diagonal-split">
         <div className="container-custom">
           <div className="mb-16 text-center">
-            <h2 className="slashed-heading font-montserrat font-black text-4xl md:text-5xl text-accent-500 mb-6 tracking-wide">
-              {t('blog.featuredPosts').split(' ')[0]} <span className="text-primary-500">{t('blog.featuredPosts').split(' ')[1]}</span>
+            <h2 className="slashed-heading font-montserrat font-black text-4xl md:text-5xl text-white mb-6 tracking-wide">
+              {t('blog.featuredPosts')}
             </h2>
             <div className="w-24 h-1 bg-primary-500 mx-auto"></div>
           </div>
-          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             {featuredPosts.map((post, index) => (
-              <div 
-                key={post.id}
-                className="propaganda-box transform hover:-translate-y-2 hover:shadow-lg transition-all duration-300 h-full flex flex-col"
-                data-aos="fade-up"
-                data-aos-delay={index * 100}
-              >
+              <div key={post._id} className="propaganda-box h-full flex flex-col">
                 <div className="relative overflow-hidden h-64">
-                  <img 
-                    src={post.image} 
-                    alt={post.title} 
-                    className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
-                  />
+                  <img src={post.featuredImage || post.image || '/images/placeholder.jpg'} alt={post.title} className="w-full h-full object-cover" />
                   <div className="absolute top-0 right-0 bg-primary-500 text-white px-3 py-1 font-bold text-sm uppercase">
-                    {post.category}
+                    {translateCategory(post.category)}
                   </div>
                 </div>
-                
                 <div className="p-5 flex-1 flex flex-col">
-                  <h3 className="text-2xl font-bold mb-3 text-accent-500 border-diagonal">
-                    {post.title}
-                  </h3>
-                  
-                  <p className="text-accent-500 mb-4 flex-1">
-                    {post.excerpt}
-                  </p>
-                  
-                  <div className="mt-auto">
-                    <div className="flex items-center justify-between text-sm border-t border-primary-500 pt-3">
-                      <span className="font-bold text-primary-500">{post.author}</span>
-                      <span className="text-accent-500">{formatDate(post.publishDate)}</span>
-                    </div>
-                    
-                    <Link 
-                      href={`/blog/${post.id}`} 
-                      className="mt-4 inline-block text-primary-500 hover:text-accent-500 font-bold uppercase text-sm tracking-wider"
-                    >
-                      {t('common.readMore')} &rarr;
-                    </Link>
+                  <h3 className="text-2xl font-bold mb-3 text-white border-diagonal">{post.title}</h3>
+                  <p className="text-white mb-4 flex-1">{post.excerpt}</p>
+                  <div className="mt-auto flex items-center justify-between text-sm border-t border-primary-500 pt-3">
+                    <span className="font-bold text-primary-500">{post.author?.firstName || post.author?.name || post.author?.username || '-'}</span>
+                    <span className="text-accent-500">{formatDate(post.publishedAt)}</span>
                   </div>
+                  <Link href={`/blog/${post.slug}`} className="mt-4 inline-block text-primary-500 hover:text-accent-500 font-bold uppercase text-sm tracking-wider">
+                    {t('common.readMore')} &rarr;
+                  </Link>
                 </div>
               </div>
             ))}
@@ -258,153 +172,91 @@ const BlogPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Filter Section */}
+      {/* Filter & Posts Section */}
       <section className="section-padding bg-black relative">
-        <div className="absolute inset-0 bg-pattern opacity-5"></div>
         <div className="container-custom relative z-10">
           <div className="text-center mb-12">
-            <h3 className="font-montserrat font-black text-3xl text-accent-500 mb-6 tracking-wide uppercase">
-              {t('blog.allPosts').split(' ')[0]} <span className="text-primary-500">{t('blog.allPosts').split(' ')[1]}</span>
+            <h3 className="font-montserrat font-black text-3xl text-white mb-6 tracking-wide uppercase">
+              {t('blog.allPosts')}
             </h3>
             <div className="w-20 h-1 bg-primary-500 mx-auto mb-8"></div>
-            
-            {/* Search Box */}
             <div className="max-w-xl mx-auto mb-8">
-              <form onSubmit={handleSearch} className="flex items-center gap-2">
-                <input 
-                  type="text" 
-                  placeholder={t('blog.searchPlaceholder')} 
-                  className="form-input flex-1"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  aria-label="Blog yazılarında arama yap"
-                />
-                <Button 
-                  variant="primary" 
-                  type="submit" 
-                  className="px-6 py-3"
-                  disabled={isLoading}
-                >
-                  {isLoading ? t('common.searching') : t('common.search')}
-                </Button>
-              </form>
+              <input
+                type="text"
+                placeholder={t('blog.search.placeholder')}
+                className="form-input flex-1"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                aria-label="Blog yazılarında arama yap"
+              />
             </div>
-            
             <div className="propaganda-box inline-block p-2 mb-6">
               <div className="flex flex-wrap justify-center gap-4">
                 {categories.map((category) => (
                   <button
                     key={category}
-                    onClick={() => setActiveCategory(category)}
-                    className={`px-6 py-3 font-bold uppercase tracking-wider transition-all duration-200 ${
-                      activeCategory === category
-                        ? 'bg-primary-500 text-white'
-                        : 'bg-secondary-900 text-accent-500 hover:bg-secondary-800 border border-primary-500'
-                    }`}
+                    onClick={() => handleCategoryClick(category)}
+                    className={`px-6 py-3 font-bold uppercase tracking-wider transition-all duration-200 ${activeCategory === category ? 'bg-primary-500 text-white' : 'bg-secondary-900 text-accent-500 hover:bg-secondary-800 border border-primary-500'}`}
                     aria-pressed={activeCategory === category}
-                    aria-label={`Kategori: ${category === 'all' ? 'Tümü' : category}`}
                   >
-                    {getCategoryName(category)}
+                    {category === 'all' ? t('blog.categories.all') : translateCategory(category)}
                   </button>
                 ))}
               </div>
             </div>
           </div>
-          
           {isLoading ? (
             <div className="text-center py-20">
               <div className="loading-spinner mx-auto"></div>
               <p className="text-accent-500 mt-4">{t('blog.loadingPosts')}</p>
             </div>
           ) : (
-            <>
+            <React.Fragment>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {currentPosts.map((post, index) => (                
-                  <div 
-                    key={post.id}
-                    className="card hover:shadow-2xl transition-all duration-300 h-full flex flex-col"
-                    data-aos="fade-up"
-                    data-aos-delay={index * 100}
-                  >
+                {paginatedPosts.map((post, index) => (
+                  <div key={post._id} className="card hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
                     <div className="relative overflow-hidden h-48">
-                      <img 
-                        src={post.image} 
-                        alt={post.title} 
-                        className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
-                      />
+                      <img src={post.featuredImage || post.image || '/images/placeholder.jpg'} alt={post.title} className="w-full h-full object-cover" />
                       <div className="absolute top-0 right-0 bg-primary-500 text-white px-3 py-1 font-bold text-sm uppercase">
-                        {post.category}
+                        {translateCategory(post.category)}
                       </div>
                     </div>
-                    
                     <div className="p-5 flex-1 flex flex-col">
-                      <div className="mb-3 flex flex-wrap gap-2">
-                        {post.tags.slice(0, 3).map((tag) => (
-                          <span 
-                            key={tag}
-                            className="inline-block bg-secondary-700 text-accent-500 text-xs font-bold px-2 py-1 rounded-sm uppercase tracking-wider"
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                      <h3 className="text-xl font-bold mb-3 text-white">{post.title}</h3>
+                      <p className="text-white opacity-80 mb-4 flex-1 text-sm">{post.excerpt}</p>
+                      <div className="mt-auto flex items-center justify-between text-sm border-t border-primary-500 pt-3">
+                        <span className="font-bold text-primary-500">{post.author?.firstName || post.author?.name || post.author?.username || '-'}</span>
+                        <span className="text-accent-500">{formatDate(post.publishedAt)}</span>
                       </div>
-                      
-                      <h3 className="text-xl font-bold mb-3 text-accent-500">
-                        {post.title}
-                      </h3>
-                      
-                      <p className="text-accent-500 opacity-80 mb-4 flex-1 text-sm">
-                        {post.excerpt}
-                      </p>
-                      
-                      <div className="mt-auto">
-                        <div className="flex items-center justify-between text-sm border-t border-primary-500 pt-3">
-                          <span className="font-bold text-primary-500">{post.author}</span>
-                          <span className="text-accent-500">{formatDate(post.publishDate)}</span>
-                        </div>
-                        
-                        <Link 
-                          href={`/blog/${post.id}`} 
-                          className="mt-4 inline-block text-primary-500 hover:text-accent-500 font-bold uppercase text-sm tracking-wider"
-                        >
-                          {t('common.readMore')} &rarr;
-                        </Link>
-                      </div>
+                      <Link href={`/blog/${post.slug}`} className="mt-4 inline-block text-primary-500 hover:text-accent-500 font-bold uppercase text-sm tracking-wider">
+                        {t('common.readMore')} &rarr;
+                      </Link>
                     </div>
                   </div>
                 ))}
               </div>
-
               {filteredPosts.length === 0 && (
-                <div className="text-center py-12 bg-secondary-900 border-l-4 border-primary-500">
-                  <p className="text-accent-500 text-lg">
+                <div className="text-center py-12 bg-secondary-900 border-l-4 border-primary-500 rounded-lg shadow-md">
+                  <p className="text-white text-lg font-semibold mb-2">
                     {t('blog.noResults')}
                   </p>
-                  <button 
-                    onClick={() => {
-                      setSearchQuery('');
-                      setActiveCategory('all');
-                    }}
-                    className="mt-4 text-primary-500 font-bold hover:underline"
-                  >
+                  <p className="text-white text-base mb-4 font-semibold">
+                    Pro İpucu: Okuyucularınız için değerli bilgiler paylaşmayı unutmayın.
+                  </p>
+                  <button onClick={() => { setSearchQuery(''); setActiveCategory('all'); }} className="mt-4 text-primary-400 font-bold hover:underline transition-colors">
                     {t('blog.showAllPosts')}
                   </button>
                 </div>
               )}
-
               {/* Pagination */}
-              {filteredPosts.length > postsPerPage && (
+              {totalPages > 1 && (
                 <div className="flex justify-center mt-12">
-                  <div className="flex">
-                    {Array.from({ length: Math.ceil(filteredPosts.length / postsPerPage) }).map((_, index) => (
+                  <div className="flex bg-secondary-900 rounded-lg shadow px-4 py-2 gap-2">
+                    {Array.from({ length: totalPages }).map((_, index) => (
                       <button
                         key={index}
-                        onClick={() => paginate(index + 1)}
-                        className={`mx-1 px-4 py-2 ${
-                          currentPage === index + 1
-                            ? 'bg-primary-500 text-white'
-                            : 'bg-secondary-800 text-accent-500 hover:bg-secondary-700'
-                        }`}
+                        onClick={() => handlePageChange(index + 1)}
+                        className={`mx-1 px-4 py-2 rounded font-semibold transition-colors border focus:outline-none focus:ring-2 focus:ring-primary-500 ${currentPage === index + 1 ? 'bg-primary-500 text-white border-primary-500 shadow' : 'bg-secondary-800 text-accent-500 border-secondary-700 hover:bg-secondary-700'}`}
                         aria-current={currentPage === index + 1 ? 'page' : undefined}
                         aria-label={`Sayfa ${index + 1}`}
                       >
@@ -414,7 +266,7 @@ const BlogPage: React.FC = () => {
                   </div>
                 </div>
               )}
-            </>
+            </React.Fragment>
           )}
         </div>
       </section>
@@ -423,33 +275,16 @@ const BlogPage: React.FC = () => {
       <section className="bg-black border-t-4 border-primary-500 text-white section-padding">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-accent-500">
-              {t('blog.newsletterTitle')}
-            </h2>
-            <p className="text-xl mb-8 text-accent-500">
-              {t('blog.newsletterDesc')}
-            </p>
-            
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-accent-500">{t('blog.newsletterTitle')}</h2>
+            <p className="text-xl mb-8 text-accent-500">{t('blog.newsletterDesc')}</p>
             <div className="max-w-xl mx-auto">
               <form className="flex flex-col md:flex-row gap-4">
-                <input 
-                  type="email" 
-                  placeholder={t('common.email')} 
-                  className="form-input flex-1"
-                  aria-label={t('common.email')}
-                  required
-                />
-                <Button variant="primary" className="px-8 py-3 font-bold uppercase tracking-wider">
-                  {t('common.subscribe')}
-                </Button>
+                <input type="email" placeholder={t('common.email')} className="form-input flex-1" aria-label={t('common.email')} required />
+                <Button variant="primary" className="px-8 py-3 font-bold uppercase tracking-wider">{t('common.subscribe')}</Button>
               </form>
-              <p className="text-sm text-accent-500 mt-3">
-                {t('blog.privacyNotice')}
-              </p>
+              <p className="text-sm text-accent-500 mt-3">{t('blog.privacyNotice')}</p>
               <div className="mt-6">
-                <Link href="/contact" className="text-primary-500 hover:text-accent-500 font-bold">
-                  {t('blog.suggestPost')}
-                </Link>
+                <Link href="/contact" className="text-primary-500 hover:text-accent-500 font-bold">{t('blog.suggestPost')}</Link>
               </div>
             </div>
           </div>

@@ -10,26 +10,26 @@ const LanguageSwitcher: React.FC = () => {
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="bg-primary-500 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-primary-600 transition-colors duration-200"
+          className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors duration-200"
           aria-label={t('language.switch')}
         >
           <span className="font-bold text-sm">{language.toUpperCase()}</span>
         </button>
 
         {isOpen && (
-          <div className="absolute bottom-14 right-0 bg-secondary-800 rounded-lg shadow-xl py-2 min-w-[120px]">
+          <div className="absolute bottom-14 right-0 bg-gray-800 rounded-lg shadow-xl py-2 min-w-[120px]">
             <button
               onClick={() => { setLanguage('tr'); setIsOpen(false); }}
-              className={`w-full text-left px-4 py-2 ${
-                language === 'tr' ? 'bg-primary-500 text-white' : 'text-accent-500 hover:bg-secondary-700'
+              className={`w-full text-left px-4 py-2 transition-colors ${
+                language === 'tr' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'
               }`}
             >
-              🇹🇷 Turkish
+              🇹🇷 Türkçe
             </button>
             <button
               onClick={() => { setLanguage('en'); setIsOpen(false); }}
-              className={`w-full text-left px-4 py-2 ${
-                language === 'en' ? 'bg-primary-500 text-white' : 'text-accent-500 hover:bg-secondary-700'
+              className={`w-full text-left px-4 py-2 transition-colors ${
+                language === 'en' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'
               }`}
             >
               🇬🇧 English

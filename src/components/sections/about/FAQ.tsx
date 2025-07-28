@@ -42,17 +42,17 @@ const FAQ: React.FC = () => {
   };
 
   return (
-    <section className="section-padding bg-secondary-700">
-      <div className="container-custom">
+    <section className="py-16 md:py-24 bg-black w-full">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 
-            className="font-montserrat font-bold text-4xl md:text-5xl mb-6 text-accent-500"
+            className="font-montserrat font-bold text-4xl md:text-5xl mb-6 text-white"
             data-aos="fade-up"
           >
-            <span className="text-gradient">{t('faq.title')}</span>
+            <span className="bg-gradient-to-r from-primary to-red-600 bg-clip-text text-transparent">{t('faq.title')}</span>
           </h2>
           <p 
-            className="text-lg md:text-xl text-accent-500 max-w-3xl mx-auto"
+            className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto"
             data-aos="fade-up"
             data-aos-delay="200"
           >
@@ -64,15 +64,15 @@ const FAQ: React.FC = () => {
           {faqItems.map((item, index) => (
             <div
               key={index}
-              className="card mb-4"
+              className="bg-gray-900 rounded-lg mb-4 border border-gray-800 hover:border-primary-500 transition-all duration-300"
               data-aos="fade-up"
               data-aos-delay={300 + index * 100}
             >
               <button
                 onClick={() => toggleItem(index)}
-                className="w-full text-left p-6 flex items-center justify-between hover:bg-secondary-600 transition-colors duration-200"
+                className="w-full text-left p-6 flex items-center justify-between hover:bg-gray-800 transition-colors duration-200 rounded-lg"
               >
-                <h3 className="font-montserrat font-semibold text-lg text-accent-500 pr-4">
+                <h3 className="font-montserrat font-semibold text-lg text-white pr-4">
                   {item.question}
                 </h3>
                 <div className={`transform transition-transform duration-200 flex-shrink-0 ${
@@ -96,8 +96,8 @@ const FAQ: React.FC = () => {
               
               {openIndex === index && (
                 <div className="px-6 pb-6">
-                  <div className="border-t border-secondary-500 pt-4">
-                    <p className="text-accent-500 leading-relaxed">
+                  <div className="border-t border-gray-800 pt-4">
+                    <p className="text-gray-300 leading-relaxed">
                       {item.answer}
                     </p>
                   </div>
@@ -110,7 +110,7 @@ const FAQ: React.FC = () => {
         {/* Contact CTA */}
         <div className="text-center mt-16">
           <div 
-            className="bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl p-8 max-w-3xl mx-auto"
+            className="bg-gradient-to-r from-primary-500 to-red-600 rounded-2xl p-8 max-w-3xl mx-auto shadow-xl border border-red-700"
             data-aos="fade-up"
             data-aos-delay="700"
           >
@@ -122,7 +122,7 @@ const FAQ: React.FC = () => {
             </p>
             <a 
               href="/contact" 
-              className="inline-block bg-white text-primary-500 font-bold py-3 px-8 rounded-lg hover:bg-neutral-100 transition-colors duration-200"
+              className="inline-block bg-white text-primary-500 font-bold py-3 px-8 rounded-lg hover:bg-gray-100 hover:scale-105 transition-all duration-300"
             >
               {t('common.contactUs')}
             </a>

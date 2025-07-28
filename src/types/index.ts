@@ -270,6 +270,15 @@ export interface SEOProps {
   image?: string;
   url?: string;
   type?: 'website' | 'article';
+  keywords?: string[];
+  author?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  section?: string;
+  tags?: string[];
+  locale?: string;
+  alternateLocales?: string[];
+  structuredData?: object;
 }
 
 // Theme Types

@@ -1,14 +1,29 @@
-import React from 'react';
-import type { AppProps } from 'next/app';
-import '@/styles/globals.css';
-import { LanguageProvider } from '@/context/LanguageContext';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
+import React from 'react'
+import type { AppProps } from 'next/app'
+import { useRouter } from 'next/router'
+import '@/styles/globals.css'
+import { AdminAuthProvider } from '../context/AdminAuthContext'
+import { LanguageProvider } from '../context/LanguageContext'
 
-export default function App({ Component, pageProps }: AppProps) {
+const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
+  const router = useRouter()
+  const isAdminRoute = router.pathname.startsWith('/admin')
+
+  if (isAdminRoute) {
+    return (
+      <AdminAuthProvider>
+        <LanguageProvider>
+          <Component {...pageProps} />
+        </LanguageProvider>
+      </AdminAuthProvider>
+    )
+  }
+
   return (
     <LanguageProvider>
       <Component {...pageProps} />
-      <LanguageSwitcher />
     </LanguageProvider>
-  );
+  )
 }
+
+export default MyApp

@@ -3,82 +3,110 @@ module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: {
+        DEFAULT: '1rem',
+        sm: '2rem',
+        lg: '4rem',
+        xl: '5rem',
+        '2xl': '6rem',
+      },
+    },
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        montserrat: ['Montserrat', 'sans-serif'],
+      },
       colors: {
         primary: {
-          50: '#fff1f1',
-          100: '#ffdddd',
-          200: '#ffbbbb',
-          300: '#ff9999',
-          400: '#ff7777',
-          500: '#e50000', // Ana kırmızı
+          DEFAULT: '#ff0000',
+          dark: '#cc0000',
+          light: '#ff3333',
+          50: '#fff5f5',
+          100: '#ffe0e0',
+          200: '#ffc1c1',
+          300: '#ff9a9a',
+          400: '#ff6666',
+          500: '#ff0000',
           600: '#cc0000',
           700: '#990000',
-          800: '#660000',
-          900: '#330000',
+          800: '#800000',
+          900: '#660000',
+          950: '#330000',
         },
         secondary: {
+          DEFAULT: '#000000',
+          dark: '#000000',
+          light: '#333333',
           50: '#f2f2f2',
           100: '#e6e6e6',
           200: '#cccccc',
           300: '#b3b3b3',
           400: '#999999',
-          500: '#1a1a1a', // Derin siyah
-          600: '#0f0f0f',
-          700: '#080808',
-          800: '#030303',
-          900: '#000000',
+          500: '#666666',
+          600: '#4d4d4d',
+          700: '#333333',
+          800: '#1a1a1a',
+          900: '#0d0d0d',
+          950: '#000000',
         },
         accent: {
-          50: '#f5f5f5',
-          100: '#e9e9e9',
-          200: '#d9d9d9',
-          300: '#c4c4c4',
-          400: '#9d9d9d',
-          500: '#ffffff', // Beyaz
-          600: '#ededed',
-          700: '#d1d1d1',
-          800: '#b8b8b8',
-          900: '#a0a0a0',
-        },
-        neutral: {
-          50: '#fafafa',
-          100: '#f5f5f5',
-          200: '#e5e5e5',
-          300: '#d4d4d4',
-          400: '#a3a3a3',
-          500: '#737373',
-          600: '#525252',
-          700: '#404040',
-          800: '#262626',
-          900: '#171717',
+          500: '#ffffff',
         },
       },
-      fontFamily: {
-        sans: ['Open Sans', 'system-ui', 'sans-serif'],
-        montserrat: ['Montserrat', 'system-ui', 'sans-serif'],
-        poppins: ['Poppins', 'system-ui', 'sans-serif'],
+      boxShadow: {
+        card: '0 2px 4px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1)',
+        'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
       },
-      animation: {
-        'fade-in': 'fadeIn 0.5s ease-in-out',
-        'slide-up': 'slideUp 0.6s ease-out',
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'pattern': "url('/pattern.svg')",
+        'hero-pattern': "url('/images/hero-bg.jpg')",
+        'gradient-primary': 'linear-gradient(to right, #ff0000, #330000)',
+        'gradient-red-black': 'linear-gradient(135deg, #ff0000, #990000, #000000)',
+        'gradient-black-red': 'linear-gradient(135deg, #000000, #330000, #ff0000)',
+        'gradient-red-vertical': 'linear-gradient(to bottom, #ff0000, #330000)',
+        'gradient-red-radial': 'radial-gradient(circle, #ff3333, #cc0000, #660000)',
       },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            color: theme('colors.gray.100'),
+            a: {
+              color: theme('colors.primary.DEFAULT'),
+              '&:hover': {
+                color: theme('colors.primary.light'),
+              },
+            },
+            h1: {
+              fontFamily: theme('fontFamily.montserrat'),
+              fontWeight: '700',
+            },
+            h2: {
+              fontFamily: theme('fontFamily.montserrat'),
+              fontWeight: '700',
+            },
+            h3: {
+              fontFamily: theme('fontFamily.montserrat'),
+              fontWeight: '600',
+            },
+            h4: {
+              fontFamily: theme('fontFamily.montserrat'),
+              fontWeight: '600',
+            },
+          },
         },
-        slideUp: {
-          '0%': { opacity: '0', transform: 'translateY(30px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-      },
+      }),
     },
   },
   plugins: [
     require('@tailwindcss/typography'),
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/aspect-ratio'),
   ],
 }

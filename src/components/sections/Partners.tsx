@@ -52,17 +52,17 @@ const Partners: React.FC = () => {
   ];
 
   return (
-    <section className="section-padding bg-secondary-500">
-      <div className="container-custom">
+    <section className="py-16 bg-black">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 
-            className="font-montserrat font-bold text-4xl md:text-5xl mb-6 text-accent-500"
+            className="font-montserrat font-bold text-4xl md:text-5xl mb-6 text-white"
             data-aos="fade-up"
           >
-            <span className="text-gradient">{t('partners.title')}</span>
+            <span className="bg-gradient-to-r from-primary to-red-600 bg-clip-text text-transparent">{t('partners.title')}</span>
           </h2>
           <p 
-            className="text-lg md:text-xl text-accent-500 max-w-3xl mx-auto"
+            className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto"
             data-aos="fade-up"
             data-aos-delay="200"
           >
@@ -97,26 +97,26 @@ const Partners: React.FC = () => {
 
         <div className="mt-16 text-center">
           <div 
-            className="bg-secondary-600 border border-primary-500 rounded-lg p-8 max-w-4xl mx-auto"
+            className="bg-gradient-to-r from-red-800 to-black border border-red-700 rounded-lg p-8 max-w-4xl mx-auto"
             data-aos="fade-up"
             data-aos-delay="700"
           >
-            <h3 className="font-montserrat font-semibold text-2xl mb-4 text-accent-500">
+            <h3 className="font-montserrat font-semibold text-2xl mb-4 text-white">
               {t('partners.becomePartner')}
             </h3>
-            <p className="text-accent-500 mb-6">
+            <p className="text-gray-300 mb-6">
               {t('partners.partnershipDescription')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a 
                 href="mailto:ortaklik@beyond2c.org" 
-                className="btn-primary inline-block"
+                className="btn-gradient inline-block px-6 py-3 rounded-md font-medium text-white transition-all duration-300 hover:scale-105"
               >
                 {t('partners.contactUs')}
               </a>
               <a 
                 href="/partnerships" 
-                className="btn-outline inline-block"
+                className="border border-white text-white hover:bg-white hover:text-black inline-block px-6 py-3 rounded-md font-medium transition-all duration-300"
               >
                 {t('partners.partnershipInfo')}
               </a>

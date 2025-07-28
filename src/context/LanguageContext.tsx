@@ -8,7 +8,12 @@ interface LanguageContextType {
   t: (key: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+// Create context with default values for null safety
+const LanguageContext = createContext<LanguageContextType>({
+  language: 'tr',
+  setLanguage: () => {},
+  t: (key: string) => key,
+});
 
 // Translation dictionary
 const translations: Record<string, Record<Language, string>> = {
@@ -31,7 +36,7 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'nav.voices': {
     tr: 'Sesler',
-    en: 'Voices',
+    en: 'VOICES',
   },
   'nav.dataHub': {
     tr: 'Veri Merkezi',
@@ -81,11 +86,11 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'common.getStarted': {
     tr: 'Başla',
-    en: 'Get Started',
+    en: 'GET STARTED',
   },
   'common.moreInfo': {
     tr: 'Daha Fazla Bilgi',
-    en: 'More Information',
+    en: 'MORE INFORMATION',
   },
   'common.search': {
     tr: 'ARA',
@@ -113,7 +118,7 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'common.tool': {
     tr: 'İnteraktif Araç',
-    en: 'Interactive Tool',
+    en: 'INTERACTIVE TOOL',
   },
   'common.dataset': {
     tr: 'Veri Seti',
@@ -121,7 +126,7 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'common.exploreMap': {
     tr: 'Haritayı Keşfet',
-    en: 'Explore Map',
+    en: 'EXPLORE THE MAP',
   },
   
   // Hero section
@@ -139,21 +144,21 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'hero.criticalThresholdLabel': {
     tr: 'Kritik Eşik',
-    en: 'Critical Threshold',
+    en: 'CRITICAL THRESHOLD',
   },
   'hero.yearsLeft': {
     tr: 'Yıl Kaldı',
-    en: 'Years Left',
+    en: 'YEARS LEFT',
   },
   'hero.generation': {
     tr: 'Kuşağı',
-    en: 'Generation',
+    en: 'GENERATION',
   },
   
   // Call to Action
   'cta.timeToAct': {
     tr: 'Harekete Geçmenin Zamanı',
-    en: 'Time to Act',
+    en: 'TIME TO ACT',
   },
   'cta.description': {
     tr: '2°C eşiğini aşmadan önce iklim krizi ile mücadelede sen de yer al. Birlikte daha güçlüyüz!',
@@ -161,7 +166,7 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'cta.volunteer': {
     tr: 'Gönüllü Ol',
-    en: 'Volunteer',
+    en: 'VOLUNTEER',
   },
   'cta.volunteerDesc': {
     tr: 'Yerel projelerde yer al, fark yarat',
@@ -169,7 +174,7 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'cta.share': {
     tr: 'Paylaş',
-    en: 'Share',
+    en: 'SHARE',
   },
   'cta.shareDesc': {
     tr: 'Hikayeni anlat, başkalarına ilham ver',
@@ -177,7 +182,7 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'cta.influence': {
     tr: 'Etkileyici Ol',
-    en: 'Be Influential',
+    en: 'BE INFLUENTIAL',
   },
   'cta.influenceDesc': {
     tr: 'Yerel yönetimlerle bağlantı kur',
@@ -297,6 +302,26 @@ const translations: Record<string, Record<Language, string>> = {
     tr: 'Aktivizm',
     en: 'Activism',
   },
+  'blog.categories.sustainability': {
+    tr: 'SÜRDÜRÜLEBİLİRLİK',
+    en: 'SUSTAINABILITY',
+  },
+  'blog.categories.climateChange': {
+    tr: 'İKLİM DEĞİŞİKLİĞİ',
+    en: 'CLIMATE CHANGE',
+  },
+  'blog.categories.climate': {
+    tr: 'CLİMATE',
+    en: 'CLIMATE',
+  },
+  'blog.categories.environmentalProtection': {
+    tr: 'ÇEVRE KORUMA',
+    en: 'ENVIRONMENTAL PROTECTION',
+  },
+  'blog.categories.all': {
+    tr: 'ALL',
+    en: 'All',
+  },
   
   // DataSnapshot
   'dataSnapshot.title': {
@@ -397,7 +422,7 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'common.viewAll': {
     tr: 'Tümünü Gör',
-    en: 'View All',
+    en: 'VIEW ALL',
   },
   'common.all': {
     tr: 'Tümü',
@@ -649,11 +674,75 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'dataHub.criticalThreshold': {
     tr: 'Kritik Eşik',
-    en: 'Critical Threshold',
+    en: 'CRITICAL THRESHOLD',
   },
   'dataHub.positiveDevelopment': {
     tr: 'Olumlu Gelişme',
     en: 'Positive Development',
+  },
+  'dataHub.source': {
+    tr: 'Kaynak',
+    en: 'Source',
+  },
+  'dataHub.millionKm2': {
+    tr: 'milyon km²',
+    en: 'million km²',
+  },
+  'dataHub.decade': {
+    tr: 'dekad',
+    en: 'decade',
+  },
+  'dataHub.year': {
+    tr: 'yıl',
+    en: 'year',
+  },
+  'dataHub.globalTemperatureRise': {
+    tr: 'Küresel sıcaklık artışı',
+    en: 'Global temperature rise',
+  },
+  'dataHub.noDataFound': {
+    tr: 'Aradığınız kriterlere uygun veri bulunamadı.',
+    en: 'No data found matching your criteria.',
+  },
+  'dataHub.searchPlaceholder': {
+    tr: 'Veri ara...',
+    en: 'Search data...',
+  },
+  'dataHub.current': {
+    tr: 'Mevcut',
+    en: 'Current',
+  },
+  'dataHub.target': {
+    tr: 'Hedef',
+    en: 'Target',
+  },
+  'dataHub.temperatureReached': {
+    tr: 'ulaştı',
+    en: 'reached',
+  },
+  'dataHub.temperatureOnly': {
+    tr: 'eşiğine sadece',
+    en: 'only',
+  },
+  'dataHub.temperatureLeft': {
+    tr: 'kaldı',
+    en: 'left to',
+  },
+  'dataHub.renewableEnergyReached': {
+    tr: 'ulaştı ve her yıl',
+    en: 'reached and',
+  },
+  'dataHub.renewableEnergyIncreasing': {
+    tr: 'artış gösteriyor',
+    en: 'increasing annually',
+  },
+  'dataHub.takeAction': {
+    tr: 'Harekete Geç',
+    en: 'Take Action',
+  },
+  'dataHub.exploreIssues': {
+    tr: 'Sorunları Keşfet',
+    en: 'Explore Issues',
   },
   'dataHub.dataSpeaks': {
     tr: 'Veriler Konuşuyor',
@@ -1073,7 +1162,7 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'mapPreview.title': {
     tr: 'İnteraktif Etki Haritası',
-    en: 'Interactive Impact Map',
+    en: 'INTERACTIVE IMPACT MAP',
   },
   'mapPreview.description': {
     tr: 'Türkiye genelinde gerçekleştirilen eylemleri keşfedin. Yerel toplulukların mücadelesine siz de destek olun.',
@@ -1081,7 +1170,7 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'mapPreview.interactiveMap': {
     tr: 'İnteraktif Harita',
-    en: 'Interactive Map',
+    en: 'INTERACTIVE MAP',
   },
   'mapPreview.mapStats': {
     tr: '2,847+ eylem, 156 şehir, 1 hedef',
@@ -1303,7 +1392,7 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'about.stats.criticalThreshold': {
     tr: 'Kritik Eşik',
-    en: 'Critical Threshold',
+    en: 'CRITICAL THRESHOLD',
   },
   'about.stats.targetYear': {
     tr: 'Hedef Yıl',
@@ -1582,9 +1671,5 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
 };
 
 export const useLanguage = (): LanguageContextType => {
-  const context = useContext(LanguageContext);
-  if (!context) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
-  }
-  return context;
+  return useContext(LanguageContext);
 };

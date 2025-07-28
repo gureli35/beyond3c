@@ -9,6 +9,8 @@ const ContactForm: React.FC = () => {
     email: '',
     subject: '',
     message: '',
+    phone: '',
+    organization: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -52,19 +54,47 @@ const ContactForm: React.FC = () => {
     if (!validateForm()) {
       return;
     }
+    
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsSubmitted(true);
-    setIsSubmitting(false);
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
+    
+    try {
+      const response = await fetch('/api/contact-notion', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-    }, 3000);
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsSubmitted(true);
+        console.log('✅ Mesaj email olarak gönderildi');
+        
+        // 3 saniye sonra formu sıfırla
+        setTimeout(() => {
+          setIsSubmitted(false);
+          setFormData({
+            name: '',
+            email: '',
+            subject: '',
+            message: '',
+            phone: '',
+            organization: '',
+          });
+        }, 3000);
+      } else {
+        throw new Error(data.message || 'Mesaj gönderilemedi');
+      }
+    } catch (error) {
+      console.error('❌ Form submission error:', error);
+      setErrors({
+        submit: error instanceof Error ? error.message : 'Bir hata oluştu. Lütfen tekrar deneyin.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -88,6 +118,14 @@ const ContactForm: React.FC = () => {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Submit Error Message */}
+          {errors.submit && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+              <strong className="font-bold">Hata: </strong>
+              <span className="block sm:inline">{errors.submit}</span>
+            </div>
+          )}
+          
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-accent-500 mb-2">
               {language === 'tr' ? 'Adınız Soyadınız *' : 'Full Name *'}
@@ -123,6 +161,34 @@ const ContactForm: React.FC = () => {
             {errors.email && (
               <p className="text-red-500 text-xs mt-1">{errors.email}</p>
             )}
+          </div>
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-accent-500 mb-2">
+              {language === 'tr' ? 'Telefon Numarası' : 'Phone Number'}
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="form-input"
+              placeholder={language === 'tr' ? '+90 555 123 45 67' : '+90 555 123 45 67'}
+            />
+          </div>
+          <div>
+            <label htmlFor="organization" className="block text-sm font-medium text-accent-500 mb-2">
+              {language === 'tr' ? 'Organizasyon/Kurum' : 'Organization/Institution'}
+            </label>
+            <input
+              type="text"
+              id="organization"
+              name="organization"
+              value={formData.organization}
+              onChange={handleChange}
+              className="form-input"
+              placeholder={language === 'tr' ? 'Kurum adı (opsiyonel)' : 'Organization name (optional)'}
+            />
           </div>
           <div>
             <label htmlFor="subject" className="block text-sm font-medium text-accent-500 mb-2">

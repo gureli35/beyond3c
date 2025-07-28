@@ -50,7 +50,7 @@ const DataHubPage: React.FC = () => {
       id: 'global-temp',
       title: t('dataHub.globalTemperature'),
       value: '+1.2°C',
-      change: '+0.08°C/dekad',
+      change: language === 'tr' ? '+0.08°C/dekad' : '+0.08°C/decade',
       trend: 'up',
       category: 'temperature',
       description: language === 'tr' 
@@ -63,7 +63,7 @@ const DataHubPage: React.FC = () => {
       id: 'co2-levels',
       title: t('dataHub.co2Levels'),
       value: '421.2 ppm',
-      change: '+2.4 ppm/yıl',
+      change: language === 'tr' ? '+2.4 ppm/yıl' : '+2.4 ppm/year',
       trend: 'up',
       category: 'emissions',
       description: language === 'tr' 
@@ -76,7 +76,7 @@ const DataHubPage: React.FC = () => {
       id: 'renewable-energy',
       title: t('dataHub.renewableEnergy'),
       value: '%28.3',
-      change: '+1.2%/yıl',
+      change: language === 'tr' ? '+1.2%/yıl' : '+1.2%/year',
       trend: 'up',
       category: 'energy',
       description: language === 'tr' 
@@ -88,8 +88,8 @@ const DataHubPage: React.FC = () => {
     {
       id: 'sea-level',
       title: t('dataHub.seaLevelRise'),
-      value: '+3.4 mm/yıl',
-      change: '+0.1 mm/yıl²',
+      value: language === 'tr' ? '+3.4 mm/yıl' : '+3.4 mm/year',
+      change: language === 'tr' ? '+0.1 mm/yıl²' : '+0.1 mm/year²',
       trend: 'up',
       category: 'ocean',
       description: language === 'tr' 
@@ -101,8 +101,8 @@ const DataHubPage: React.FC = () => {
     {
       id: 'arctic-ice',
       title: t('dataHub.arcticSeaIce'),
-      value: '4.2 milyon km²',
-      change: '-13%/dekad',
+      value: language === 'tr' ? '4.2 milyon km²' : '4.2 million km²',
+      change: language === 'tr' ? '-13%/dekad' : '-13%/decade',
       trend: 'down',
       category: 'ocean',
       description: language === 'tr' 
@@ -115,7 +115,7 @@ const DataHubPage: React.FC = () => {
       id: 'carbon-budget',
       title: t('dataHub.carbonBudget'),
       value: '380 GtCO₂',
-      change: '-40 GtCO₂/yıl',
+      change: language === 'tr' ? '-40 GtCO₂/yıl' : '-40 GtCO₂/year',
       trend: 'down',
       category: 'emissions',
       description: language === 'tr' 
@@ -215,7 +215,7 @@ const DataHubPage: React.FC = () => {
             <div className="flex-1 max-w-md">
               <input
                 type="text"
-                placeholder="Veri ara..."
+                placeholder={t('dataHub.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="form-input"
@@ -283,7 +283,7 @@ const DataHubPage: React.FC = () => {
 
                 <div className="flex items-center justify-between text-xs text-accent-500">
                   <div>
-                    <span className="font-medium">Kaynak:</span> {item.source}
+                    <span className="font-medium">{t('dataHub.source')}:</span> {item.source}
                   </div>
                   <div>
                     {formatDate(item.lastUpdated)}
@@ -297,7 +297,7 @@ const DataHubPage: React.FC = () => {
             <div className="text-center py-12">
               <div className="text-accent-500 text-lg mb-4">📊</div>
               <p className="text-accent-500">
-                Aradığınız kriterlere uygun veri bulunamadı.
+                {t('dataHub.noDataFound')}
               </p>
             </div>
           )}
@@ -309,37 +309,43 @@ const DataHubPage: React.FC = () => {
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-center mb-12 text-accent-500">
-              Önemli Bulgular
+              {t('dataHub.importantFindings')}
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="propaganda-box transform skew-x-0 p-6">
                 <div className="text-red-500 text-2xl mb-4">🚨</div>
-                <h3 className="text-xl font-semibold mb-3 text-accent-500">Kritik Eşik</h3>
+                <h3 className="text-xl font-semibold mb-3 text-accent-500">{t('dataHub.criticalThreshold')}</h3>
                 <p className="text-accent-500 mb-4">
-                  Küresel sıcaklık artışı 1.2°C'ye ulaştı. 1.5°C eşiğine sadece 0.3°C kaldı.
+                  {language === 'tr' 
+                    ? `${t('dataHub.globalTemperatureRise')} 1.2°C'ye ${t('dataHub.temperatureReached')}. 1.5°C ${t('dataHub.temperatureOnly')} 0.3°C ${t('dataHub.temperatureLeft')}.`
+                    : `${t('dataHub.globalTemperatureRise')} has reached 1.2°C. Only 0.3°C left to the 1.5°C threshold.`
+                  }
                 </p>
                 <div className="w-full bg-secondary-700 rounded-full h-2">
                   <div className="bg-red-500 h-2 rounded-full" style={{ width: '80%' }}></div>
                 </div>
                 <div className="flex justify-between text-sm text-accent-500 mt-2">
-                  <span>Mevcut: 1.2°C</span>
-                  <span>Hedef: 1.5°C</span>
+                  <span>{t('dataHub.current')}: 1.2°C</span>
+                  <span>{t('dataHub.target')}: 1.5°C</span>
                 </div>
               </div>
 
               <div className="propaganda-box transform skew-x-0 p-6">
                 <div className="text-green-500 text-2xl mb-4">📈</div>
-                <h3 className="text-xl font-semibold mb-3 text-accent-500">Olumlu Gelişme</h3>
+                <h3 className="text-xl font-semibold mb-3 text-accent-500">{t('dataHub.positiveDevelopment')}</h3>
                 <p className="text-accent-500 mb-4">
-                  Yenilenebilir enerji payı %28.3'e ulaştı ve her yıl %1.2 artış gösteriyor.
+                  {language === 'tr' 
+                    ? `Yenilenebilir enerji payı %28.3'e ${t('dataHub.renewableEnergyReached')} %1.2 ${t('dataHub.renewableEnergyIncreasing')}.`
+                    : `Renewable energy share has reached 28.3% and is increasing by 1.2% annually.`
+                  }
                 </p>
                 <div className="w-full bg-secondary-700 rounded-full h-2">
                   <div className="bg-green-500 h-2 rounded-full" style={{ width: '28%' }}></div>
                 </div>
                 <div className="flex justify-between text-sm text-accent-500 mt-2">
-                  <span>Mevcut: %28.3</span>
-                  <span>Hedef: %100</span>
+                  <span>{t('dataHub.current')}: %28.3</span>
+                  <span>{t('dataHub.target')}: %100</span>
                 </div>
               </div>
             </div>
@@ -352,18 +358,17 @@ const DataHubPage: React.FC = () => {
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-accent-500">
-              Veriler Konuşuyor
+              {t('dataHub.dataSpeaks')}
             </h2>
             <p className="text-xl mb-8 text-accent-500">
-              Bilimsel veriler iklim krizinin gerçekliğini gösteriyor. 
-              Harekete geçmek için daha fazla beklemeyelim!
+              {t('dataHub.dataDescription')}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a href="/take-action" className="btn-primary">
-                Harekete Geç
+                {t('dataHub.takeAction')}
               </a>
               <a href="/issues" className="btn-outline">
-                Sorunları Keşfet
+                {t('dataHub.exploreIssues')}
               </a>
             </div>
           </div>

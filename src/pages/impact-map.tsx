@@ -1,14 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Layout from '@/components/Layout';
-import InteractiveMap from '@/components/map/InteractiveMap';
-import MapFilters from '@/components/map/MapFilters';
-import ActionList from '@/components/map/ActionList';
-import { FilterOptions } from '@/types';
 import { useLanguage } from '@/context/LanguageContext';
 
 const ImpactMapPage: React.FC = () => {
-  const [filters, setFilters] = useState<FilterOptions>({});
-  const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   const { t } = useLanguage();
 
   return (
@@ -43,48 +37,19 @@ const ImpactMapPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Controls */}
-        <section className="bg-secondary-500 border-b">
-          <div className="container-custom py-6">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-              <MapFilters 
-                filters={filters}
-                onFiltersChange={setFilters}
-              />
-              
-              <div className="flex bg-secondary-700 rounded-lg p-1">
-                <button
-                  onClick={() => setViewMode('map')}
-                  className={`px-4 py-2 rounded-md transition-colors ${
-                    viewMode === 'map'
-                      ? 'bg-primary-500 text-white'
-                      : 'text-accent-500 hover:bg-secondary-600'
-                  }`}
-                >
-                  {t('impactMap.mapView')}
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`px-4 py-2 rounded-md transition-colors ${
-                    viewMode === 'list'
-                      ? 'bg-primary-500 text-white'
-                      : 'text-accent-500 hover:bg-secondary-600'
-                  }`}
-                >
-                  {t('impactMap.listView')}
-                </button>
-              </div>
-            </div>
+        {/* MapHub Embedded Map */}
+        <section className="flex-1 bg-white">
+          <div className="w-full" style={{ height: 'calc(100vh - 200px)', minHeight: '600px' }}>
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://maphub.net/embed_h/V4pDJFnUfwLiqcxu?panel=1&panel_closed=1"
+              frameBorder="0"
+              title="Beyond2C Impact Map"
+              className="w-full h-full"
+              style={{ border: 'none' }}
+            />
           </div>
-        </section>
-
-        {/* Content */}
-        <section className="flex-1">
-          {viewMode === 'map' ? (
-            <InteractiveMap filters={filters} />
-          ) : (
-            <ActionList filters={filters} />
-          )}
         </section>
       </div>
     </Layout>

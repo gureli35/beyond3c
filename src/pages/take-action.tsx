@@ -97,9 +97,11 @@ const TakeActionPage: React.FC = () => {
                     <p className="text-accent-500 mb-4">
                       {t('takeAction.individual.lifestyleDesc')}
                     </p>
-                    <Button variant="primary" className="w-full">
-                      {t('takeAction.individual.lifestyleCta')}
-                    </Button>
+                    <Link href="/contact">
+                      <Button variant="primary" className="w-full">
+                        {t('takeAction.individual.lifestyleCta')}
+                      </Button>
+                    </Link>
                   </div>
                 </div>
 
@@ -112,9 +114,11 @@ const TakeActionPage: React.FC = () => {
                     <p className="text-accent-500 mb-4">
                       {t('takeAction.individual.advocacyDesc')}
                     </p>
-                    <Button variant="primary" className="w-full">
-                      {t('takeAction.individual.advocacyCta')}
-                    </Button>
+                    <Link href="/contact">
+                      <Button variant="primary" className="w-full">
+                        {t('takeAction.individual.advocacyCta')}
+                      </Button>
+                    </Link>
                   </div>
                 </div>
 
@@ -127,9 +131,11 @@ const TakeActionPage: React.FC = () => {
                     <p className="text-accent-500 mb-4">
                       {t('takeAction.individual.volunteerDesc')}
                     </p>
-                    <Button variant="primary" className="w-full">
-                      {t('takeAction.individual.volunteerCta')}
-                    </Button>
+                    <Link href="/contact">
+                      <Button variant="primary" className="w-full">
+                        {t('takeAction.individual.volunteerCta')}
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -146,9 +152,11 @@ const TakeActionPage: React.FC = () => {
                     <p className="text-accent-500 mb-4">
                       {t('takeAction.community.organizeDesc')}
                     </p>
-                    <Button variant="primary" className="w-full">
-                      {t('takeAction.community.organizeCta')}
-                    </Button>
+                    <Link href="/contact">
+                      <Button variant="primary" className="w-full">
+                        {t('takeAction.community.organizeCta')}
+                      </Button>
+                    </Link>
                   </div>
                 </div>
 
@@ -161,9 +169,11 @@ const TakeActionPage: React.FC = () => {
                     <p className="text-accent-500 mb-4">
                       {t('takeAction.community.collaborateDesc')}
                     </p>
-                    <Button variant="primary" className="w-full">
-                      {t('takeAction.community.collaborateCta')}
-                    </Button>
+                    <Link href="/contact">
+                      <Button variant="primary" className="w-full">
+                        {t('takeAction.community.collaborateCta')}
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -180,9 +190,11 @@ const TakeActionPage: React.FC = () => {
                     <p className="text-accent-500 mb-4">
                       {t('takeAction.institutional.corporateDesc')}
                     </p>
-                    <Button variant="primary" className="w-full">
-                      {t('takeAction.institutional.corporateCta')}
-                    </Button>
+                    <Link href="/contact">
+                      <Button variant="primary" className="w-full">
+                        {t('takeAction.institutional.corporateCta')}
+                      </Button>
+                    </Link>
                   </div>
                 </div>
 
@@ -195,9 +207,11 @@ const TakeActionPage: React.FC = () => {
                     <p className="text-accent-500 mb-4">
                       {t('takeAction.institutional.educationalDesc')}
                     </p>
-                    <Button variant="primary" className="w-full">
-                      {t('takeAction.institutional.educationalCta')}
-                    </Button>
+                    <Link href="/contact">
+                      <Button variant="primary" className="w-full">
+                        {t('takeAction.institutional.educationalCta')}
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>
