@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { useLanguage } from '@/context/LanguageContext';
+import useWordPressPosts from '@/hooks/useWordPressPosts';
 
 interface FeaturedStory {
   _id: string;
@@ -10,44 +11,27 @@ interface FeaturedStory {
   excerpt?: string;
   slug: string;
   featuredImage?: string;
+  image?: string; // WordPress API'den gelen resim için
   author: {
     name: string;
-    location: {
+    location?: {
       city?: string;
       region?: string;
       country?: string;
     };
   };
   category: string;
-  readingTime: number;
+  readingTime?: number;
   publishedAt: string;
-  featured: boolean;
+  featured?: boolean;
+  tags: string[];
 }
 
 const FeaturedStories: React.FC = () => {
   const { t, language } = useLanguage();
-  const [stories, setStories] = useState<FeaturedStory[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   
-  useEffect(() => {
-    const fetchFeaturedStories = async () => {
-      try {
-        const response = await fetch('/api/voices?featured=true&limit=3&status=published');
-        if (response.ok) {
-          const data = await response.json();
-          setStories(data.data || []);
-        } else {
-          console.error('Failed to fetch featured stories');
-        }
-      } catch (error) {
-        console.error('Error fetching featured stories:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchFeaturedStories();
-  }, []);
+  // WordPress API'den voices kategorisindeki son 3 yazıyı çek
+  const { posts: voicesPosts, isLoading, error } = useWordPressPosts('voices');
 
   // Fallback mock data if no real stories are available
   const mockStories: FeaturedStory[] = [
@@ -113,9 +97,14 @@ const FeaturedStories: React.FC = () => {
     }
   ];
 
-  const displayStories = stories.length > 0 ? stories : mockStories;
+  // En son 3 yazıyı al (eğer WordPress'ten veri gelmediyse mock data kullan)
+  const featuredStories: FeaturedStory[] = voicesPosts.slice(0, 3);
+  
+  // Eğer WordPress'ten veri gelmezse mock data kullan
+  const displayStories = featuredStories.length > 0 ? featuredStories : mockStories;
 
-  const formatLocation = (location: { city?: string; region?: string; country?: string }) => {
+  const formatLocation = (location?: { city?: string; region?: string; country?: string }) => {
+    if (!location) return '';
     const parts = [];
     if (location.city) parts.push(location.city);
     if (location.region) parts.push(location.region);
@@ -152,7 +141,7 @@ const FeaturedStories: React.FC = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              {displayStories.slice(0, 3).map((story, index) => (
+              {featuredStories.map((story, index) => (
                 <div 
                   key={story._id}
                   data-aos="fade-up"
@@ -160,13 +149,13 @@ const FeaturedStories: React.FC = () => {
                 >
                   <Card
                     title={story.title}
-                    image={story.featuredImage || 'https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=500&q=80'}
-                    href={`/voices/${story.slug}`}
+                    image={story.featuredImage || story.image || 'https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=500&q=80'}
+                    href={`/blog/${story.slug}`}
                     className="h-full"
                   >
                     <div className="space-y-4">
                       <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-600 text-white">
-                        {story.category}
+                        🎤 Voices
                       </div>
                       
                       <p className="text-gray-300 line-clamp-3 leading-relaxed">
@@ -190,7 +179,7 @@ const FeaturedStories: React.FC = () => {
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span>{story.readingTime} {language === 'tr' ? 'dk' : 'min'}</span>
+                            <span>{story.readingTime || 5} {language === 'tr' ? 'dk' : 'min'}</span>
                           </div>
                         </div>
                       </div>

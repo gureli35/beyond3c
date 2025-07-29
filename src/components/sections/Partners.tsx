@@ -11,43 +11,13 @@ interface Partner {
 const Partners: React.FC = () => {
   const { t, language } = useLanguage();
   
-  // Mock data - gerçek uygulamada API'den gelecek
+  // Partner data - BeVisioneers
   const partners: Partner[] = [
     {
-      name: language === 'tr' ? 'Türkiye İklim Değişikliği Vakfı' : 'Turkish Climate Change Foundation',
-      logo: 'https://via.placeholder.com/120x60/2D7D46/FFFFFF?text=TIKDV',
-      url: '#',
-      type: 'ngo',
-    },
-    {
-      name: language === 'tr' ? 'Boğaziçi Üniversitesi' : 'Bogazici University',
-      logo: 'https://via.placeholder.com/120x60/1A5276/FFFFFF?text=BOUN',
-      url: '#',
-      type: 'academic',
-    },
-    {
-      name: language === 'tr' ? 'WWF Türkiye' : 'WWF Turkey',
-      logo: 'https://via.placeholder.com/120x60/2D7D46/FFFFFF?text=WWF',
-      url: '#',
-      type: 'ngo',
-    },
-    {
-      name: language === 'tr' ? 'Çevre Şehircilik ve İklim Bakanlığı' : 'Ministry of Environment, Urbanization and Climate',
-      logo: 'https://via.placeholder.com/120x60/1A5276/FFFFFF?text=ÇŞIB',
-      url: '#',
-      type: 'government',
-    },
-    {
-      name: language === 'tr' ? 'Sabancı Vakfı' : 'Sabanci Foundation',
-      logo: 'https://via.placeholder.com/120x60/F39C12/FFFFFF?text=SABANCI',
-      url: '#',
+      name: 'BeVisioneers',
+      logo: '/images/beVisioneers_Logo_Subline_sRGB_neg.png',
+      url: 'https://bevisioneers.world',
       type: 'corporate',
-    },
-    {
-      name: language === 'tr' ? 'İTÜ İklim Değişikliği Enstitüsü' : 'ITU Climate Change Institute',
-      logo: 'https://via.placeholder.com/120x60/2D7D46/FFFFFF?text=ITU',
-      url: '#',
-      type: 'academic',
     },
   ];
 
@@ -70,7 +40,7 @@ const Partners: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center">
+        <div className="flex justify-center items-center">
           {partners.map((partner, index) => (
             <div
               key={partner.name}
@@ -82,13 +52,13 @@ const Partners: React.FC = () => {
                 href={partner.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block opacity-60 hover:opacity-100 transition-opacity duration-300 p-4"
+                className="block opacity-80 hover:opacity-100 transition-opacity duration-300 p-8"
                 title={partner.name}
               >
                 <img
                   src={partner.logo}
                   alt={partner.name}
-                  className="max-w-full h-auto filter grayscale hover:grayscale-0 transition-all duration-300"
+                  className="max-h-16 w-auto filter hover:filter-none transition-all duration-300"
                 />
               </a>
             </div>

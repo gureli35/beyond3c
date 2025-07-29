@@ -42,34 +42,63 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // API'ye bağlanarak gerçek kimlik doğrulama yapılacak
-      // Şimdilik demo için basit bir kontrol
-      if (email === 'admin@beyond2c.org' && password === 'password') {
-        const demoUser: AdminUser = {
+      // Geçici test modası - API sorunları için
+      if (email === 'admin@beyond2c.com' && password === 'admin123') {
+        const adminUser: AdminUser = {
           id: '1',
-          email: 'admin@beyond2c.org',
+          email: 'admin@beyond2c.com',
           displayName: 'Admin User',
-          role: 'super_admin',
+          role: 'admin',
           permissions: [
-            'dashboard.view', 
-            'users.view', 'users.create', 'users.edit', 'users.delete',
-            'content.view', 'content.create', 'content.edit', 'content.delete', 'content.publish',
-            'analytics.view',
-            'system.settings'
+            // Dashboard
+            'dashboard.view',
+            // User Management - Tüm yetkiler
+            'users.view', 'users.create', 'users.edit', 'users.delete', 'users.manage',
+            // Content Management - Tüm yetkiler
+            'content.view', 'content.create', 'content.edit', 'content.delete', 'content.publish', 'content.manage',
+            // Blog Management - Tüm yetkiler
+            'blog.view', 'blog.create', 'blog.edit', 'blog.delete', 'blog.publish', 'blog.manage',
+            // Voices Management - Tüm yetkiler
+            'voices.view', 'voices.create', 'voices.edit', 'voices.delete', 'voices.publish', 'voices.manage',
+            // Media Management
+            'media.view', 'media.upload', 'media.delete', 'media.manage',
+            // Comments Management
+            'comments.view', 'comments.moderate', 'comments.delete', 'comments.manage',
+            // Analytics - Tüm yetkiler
+            'analytics.view', 'analytics.export', 'analytics.manage',
+            // System Settings - Tüm yetkiler
+            'system.settings', 'system.manage', 'system.backup', 'system.security',
+            // Super Admin - En üst düzey yetkiler
+            'super.admin', 'super.manage', 'super.override'
           ],
           lastLogin: new Date().toISOString()
         };
         
-        const token = 'demo-token-' + Date.now();
+        const token = 'test-token-' + Date.now();
         
-        localStorage.setItem('admin_token', token);
-        localStorage.setItem('admin_user', JSON.stringify(demoUser));
+        // Create a proper JWT token format (header.payload.signature)
+        // Using manually constructed JWT since jsonwebtoken doesn't work in browser
+        const header = btoa(JSON.stringify({ typ: "JWT", alg: "HS256" }));
+        const payload = btoa(JSON.stringify({
+          userId: '1',
+          email: 'admin@beyond2c.com',
+          isAdmin: true,
+          role: 'admin',
+          iat: Math.floor(Date.now() / 1000),
+          exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60) // 7 days
+        }));
+        const signature = btoa("signature"); // In a real app, this would be cryptographically signed
         
-        setUser(demoUser);
+        const testToken = `${header.replace(/=/g, '')}.${payload.replace(/=/g, '')}.${signature.replace(/=/g, '')}`;
+        
+        localStorage.setItem('admin_token', testToken);
+        localStorage.setItem('admin_user', JSON.stringify(adminUser));
+        
+        setUser(adminUser);
         setIsAuthenticated(true);
         return true;
       }
-      
+
       return false;
     } catch (error) {
       console.error('Login error:', error);

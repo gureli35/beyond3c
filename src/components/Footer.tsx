@@ -19,12 +19,6 @@ const Footer: React.FC = () => {
       { name: t('nav.blog'), href: '/blog' },
       { name: t('cta.volunteer'), href: '/take-action' },
     ],
-    resources: [
-      { name: t('nav.resources'), href: '/resources' },
-      { name: t('nav.faq'), href: '/faq' },
-      { name: t('nav.contact'), href: '/contact' },
-      { name: t('nav.privacy'), href: '/privacy' },
-    ],
   };
 
   return (
@@ -133,25 +127,6 @@ const Footer: React.FC = () => {
                 </li>
               ))}
             </ul>
-          </div>
-        </div>
-
-        {/* Resources Links - Full Width */}
-        <div className="bg-gray-900 bg-opacity-50 p-6 rounded-lg border border-gray-800 hover:border-primary-500 transition-all duration-300 mb-12">
-          <h3 className="font-montserrat font-bold text-xl mb-6 text-white flex items-center justify-center">
-            <span className="w-2 h-6 bg-primary-500 mr-3 rounded"></span>
-            {t('footer.resources')}
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {footerLinks.resources.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="group flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300 py-3 px-4 rounded-lg hover:bg-primary-500/10 border border-transparent hover:border-primary-500/30"
-              >
-                <span className="group-hover:scale-110 transition-transform duration-300">{link.name}</span>
-              </Link>
-            ))}
           </div>
         </div>
 

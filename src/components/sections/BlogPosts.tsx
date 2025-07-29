@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { useLanguage } from '@/context/LanguageContext';
+import useWordPressPosts from '@/hooks/useWordPressPosts';
 
 interface BlogPost {
   _id: string;
@@ -27,29 +28,8 @@ interface BlogPost {
 
 const BlogPosts: React.FC = () => {
   const { t, language } = useLanguage();
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { posts, isLoading, error } = useWordPressPosts('exclude-voices'); // Voices kategorisi hariç
   
-  useEffect(() => {
-    const fetchBlogPosts = async () => {
-      try {
-        const response = await fetch('/api/blogs?status=published&limit=3&sortBy=publishedAt&sortOrder=desc');
-        if (response.ok) {
-          const data = await response.json();
-          setPosts(data.data || []);
-        } else {
-          console.error('Failed to fetch blog posts');
-        }
-      } catch (error) {
-        console.error('Error fetching blog posts:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchBlogPosts();
-  }, []);
-
   // Format date for display
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -60,53 +40,8 @@ const BlogPosts: React.FC = () => {
     });
   };
 
-  // Fallback mock data if no real posts are available
-  const mockPosts: BlogPost[] = [
-    {
-      _id: '1',
-      title: language === 'tr' ? '2024 İklim Raporu: Türkiye\'nin Durumu' : '2024 Climate Report: Turkey\'s Situation',
-      excerpt: language === 'tr' 
-        ? 'Son araştırmalara göre Türkiye\'de iklim değişikliğinin etkileri hızlanıyor. Yapılması gerekenler...'
-        : 'Recent research shows that the effects of climate change in Turkey are accelerating. What needs to be done...',
-      author: {
-        name: language === 'tr' ? 'Dr. Ayşe Demir' : 'Dr. Ayse Demir'
-      },
-      publishedAt: '2024-05-15T00:00:00.000Z',
-      category: language === 'tr' ? 'Araştırma' : 'Research',
-      featuredImage: 'https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&q=80',
-      slug: '2024-iklim-raporu-turkiye'
-    },
-    {
-      _id: '2',
-      title: language === 'tr' ? 'Gençler İçin İklim Eylemi Rehberi' : 'Climate Action Guide for Youth',
-      excerpt: language === 'tr'
-        ? 'İklim değişikliği ile mücadelede gençlerin yapabileceği 10 pratik adım ve bu adımları nasıl uygulanacağı...'
-        : '10 practical steps youth can take in the fight against climate change and how to implement them...',
-      author: {
-        name: 'Kemal Arslan'
-      },
-      publishedAt: '2024-05-12T00:00:00.000Z',
-      category: language === 'tr' ? 'Rehber' : 'Guide',
-      featuredImage: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=500&q=80',
-      slug: 'gencler-icin-iklim-eylemi-rehberi'
-    },
-    {
-      _id: '3',
-      title: language === 'tr' ? 'Yerel Yönetimlerle İşbirliği Nasıl Kurulur?' : 'How to Collaborate with Local Governments?',
-      excerpt: language === 'tr'
-        ? 'İklim projelerinizi hayata geçirmek için yerel yönetimlerle etkili işbirliği kurmanın yolları...'
-        : 'Ways to establish effective collaboration with local governments to realize your climate projects...',
-      author: {
-        name: language === 'tr' ? 'Fatma Çelik' : 'Fatma Celik'
-      },
-      publishedAt: '2024-05-10T00:00:00.000Z',
-      category: language === 'tr' ? 'İpuçları' : 'Tips',
-      featuredImage: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=500&q=80',
-      slug: 'yerel-yonetimlerle-isbirligi'
-    }
-  ];
-
-  const displayPosts = posts.length > 0 ? posts : mockPosts;
+  // Get the latest 3 posts
+  const latestPosts = posts.slice(0, 3);
 
   return (
     <section className="py-16 bg-black">
@@ -134,10 +69,22 @@ const BlogPosts: React.FC = () => {
               {language === 'tr' ? 'Blog yazıları yükleniyor...' : 'Loading blog posts...'}
             </p>
           </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-white">
+              {language === 'tr' ? 'Blog yazıları yüklenirken bir hata oluştu.' : 'An error occurred while loading blog posts.'}
+            </p>
+          </div>
+        ) : latestPosts.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-white">
+              {language === 'tr' ? 'Henüz blog yazısı bulunmuyor.' : 'No blog posts available yet.'}
+            </p>
+          </div>
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              {displayPosts.slice(0, 3).map((post, index) => (
+              {latestPosts.map((post, index) => (
                 <div 
                   key={post._id}
                   data-aos="fade-up"
@@ -170,12 +117,12 @@ const BlogPosts: React.FC = () => {
                         <div className="flex items-center space-x-3">
                           <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-red-600 rounded-full flex items-center justify-center">
                             <span className="text-white font-bold text-sm">
-                              {(post.author?.firstName || post.author?.name || post.author?.username || 'A').charAt(0).toUpperCase()}
+                              {post.author.name.charAt(0).toUpperCase()}
                             </span>
                           </div>
                           <div className="flex-1">
                             <div className="font-medium text-white text-sm">
-                              {post.author?.firstName || post.author?.name || post.author?.username || 'Anonim'}
+                              {post.author.name}
                             </div>
                             <div className="text-gray-400 text-xs">
                               {language === 'tr' ? 'Yazar' : 'Author'}

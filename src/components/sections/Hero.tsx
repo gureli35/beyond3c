@@ -15,7 +15,7 @@ const Hero: React.FC = () => {
           
           {/* Critical Threshold Banner - exactly like in out folder */}
           <div className="bg-primary-600 text-white px-4 py-2 rounded-md inline-block mb-6 text-sm font-medium" data-aos="fade-down">
-            CRITICAL THRESHOLD: 2°C
+            {t('hero.criticalThreshold')}
           </div>
           
           {/* Main Title - exactly like in out folder */}
@@ -34,7 +34,7 @@ const Hero: React.FC = () => {
             data-aos-delay="200"
           >
             <p className="text-lg md:text-xl font-bold text-white">
-              TOMORROW MAY BE TOO LATE!
+              {t('hero.tomorrowTooLate')}
             </p>
           </div>
           
@@ -44,7 +44,7 @@ const Hero: React.FC = () => {
             data-aos="fade-up" 
             data-aos-delay="400"
           >
-            It's time to act on the climate crisis. Before we surpass the critical 2°C threshold, let's work together to protect the future of our planet.
+            {t('hero.description')}
           </p>
           
           {/* Action Buttons - exactly like in out folder */}
@@ -57,7 +57,7 @@ const Hero: React.FC = () => {
               <button 
                 className="bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-6 rounded w-full transition-colors duration-200"
               >
-                Take Action
+                {t('nav.takeAction')}
               </button>
             </Link>
             
@@ -65,7 +65,7 @@ const Hero: React.FC = () => {
               <button 
                 className="border border-white text-white hover:bg-white hover:text-gray-900 font-medium py-2 px-6 rounded w-full transition-colors duration-200"
               >
-                Impact Map
+                {t('common.exploreMap')}
               </button>
             </Link>
           </div>
@@ -81,8 +81,8 @@ const Hero: React.FC = () => {
               <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-red-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse"></div>
               <div className="relative text-center bg-black border-2 border-primary-500 px-6 py-4 rounded-xl min-w-[120px] hover:scale-105 transition-all duration-300 shadow-xl">
                 <div className="text-3xl md:text-4xl font-black text-primary-500 mb-1 font-mono">2°C</div>
-                <div className="text-xs md:text-sm uppercase font-bold tracking-wider text-white">Critical</div>
-                <div className="text-xs md:text-sm uppercase font-bold tracking-wider text-white">Threshold</div>
+                <div className="text-xs md:text-sm uppercase font-bold tracking-wider text-white">{t('hero.criticalThresholdLabel').split(' ')[0]}</div>
+                <div className="text-xs md:text-sm uppercase font-bold tracking-wider text-white">{t('hero.criticalThresholdLabel').split(' ')[1]}</div>
                 <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full animate-ping"></div>
               </div>
             </div>
@@ -92,8 +92,8 @@ const Hero: React.FC = () => {
               <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-orange-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
               <div className="relative text-center bg-black border-2 border-red-500 px-6 py-4 rounded-xl min-w-[120px] hover:scale-105 transition-all duration-300 shadow-xl">
                 <div className="text-3xl md:text-4xl font-black text-red-500 mb-1 font-mono animate-pulse">7</div>
-                <div className="text-xs md:text-sm uppercase font-bold tracking-wider text-white">Years</div>
-                <div className="text-xs md:text-sm uppercase font-bold tracking-wider text-white">Left</div>
+                <div className="text-xs md:text-sm uppercase font-bold tracking-wider text-white">{t('hero.yearsLeft').split(' ')[0]}</div>
+                <div className="text-xs md:text-sm uppercase font-bold tracking-wider text-white">{t('hero.yearsLeft').split(' ')[1]}</div>
                 <div className="absolute top-1 right-1 text-orange-400">⚠️</div>
               </div>
             </div>
@@ -103,7 +103,7 @@ const Hero: React.FC = () => {
               <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 via-purple-500 to-primary-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
               <div className="relative text-center bg-black border-2 border-primary-500 px-6 py-4 rounded-xl min-w-[120px] hover:scale-105 transition-all duration-300 shadow-xl overflow-hidden">
                 <div className="text-3xl md:text-4xl font-black text-primary-500 mb-1 font-mono">Z</div>
-                <div className="text-xs md:text-sm uppercase font-bold tracking-wider text-white">Generation</div>
+                <div className="text-xs md:text-sm uppercase font-bold tracking-wider text-white">{t('hero.generation')}</div>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer"></div>
                 <div className="absolute top-1 left-1 text-yellow-400">⚡</div>
               </div>

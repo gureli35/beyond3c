@@ -5,8 +5,21 @@ const nextConfig = {
   // Simplified config for development
   output: 'standalone',
   
-  // Include only the main pages for now
-  pageExtensions: ['tsx'],
+  // Include both tsx and ts files for pages and API routes
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
+  
+  // Exclude admin pages and other unnecessary pages from build
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.tsx?$/,
+      exclude: [
+        /pages\/admin/,
+        /pages\/_excluded/,
+        /pages\/register/,
+      ],
+    });
+    return config;
+  },
   
   // Ignore build errors
   typescript: {
@@ -49,6 +62,11 @@ const nextConfig = {
       {
         source: '/index',
         destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/sitemap.xml',
+        destination: '/api/sitemap.xml',
         permanent: true,
       },
     ];

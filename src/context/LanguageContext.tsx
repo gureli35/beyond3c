@@ -264,6 +264,22 @@ const translations: Record<string, Record<Language, string>> = {
     tr: 'Yazı veya konu ara...',
     en: 'Search for posts or topics...',
   },
+  'blog.search.placeholder': {
+    tr: 'Yazı veya konu ara...',
+    en: 'Search for posts or topics...',
+  },
+  'blog.loadingPosts': {
+    tr: 'Yazılar yükleniyor...',
+    en: 'Loading posts...',
+  },
+  'blog.noResults': {
+    tr: 'Arama kriterlerinize uygun yazı bulunamadı.',
+    en: 'No posts found matching your search criteria.',
+  },
+  'blog.showAllPosts': {
+    tr: 'Tüm yazıları göster',
+    en: 'Show all posts',
+  },
   'blog.newsletterTitle': {
     tr: 'Bültenimize Abone Olun',
     en: 'Subscribe to Our Newsletter',

@@ -41,47 +41,64 @@ export const authenticate = async (
       });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
-    console.log('Auth Debug - Token decoded:', { userId: decoded.userId, isAdmin: decoded.isAdmin });
-    
-    await connectDB();
-    const user = await User.findById(decoded.userId);
-    
-    if (!user) {
-      console.log('Auth Debug - Kullanıcı bulunamadı:', decoded.userId);
+    // Validate token format
+    if (!token.match(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.[A-Za-z0-9-_.+/=]*$/)) {
+      console.log('Auth Debug - Token format invalid:', token);
       return res.status(401).json({
         success: false,
-        error: 'Kullanıcı bulunamadı'
+        error: 'Geçersiz token formatı'
       });
     }
 
-    if (!user.isActive) {
-      console.log('Auth Debug - Kullanıcı aktif değil:', user.email);
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET) as any;
+      console.log('Auth Debug - Token decoded:', { userId: decoded.userId, isAdmin: decoded.isAdmin });
+      
+      await connectDB();
+      const user = await User.findById(decoded.userId);
+      
+      if (!user) {
+        console.log('Auth Debug - Kullanıcı bulunamadı:', decoded.userId);
+        return res.status(401).json({
+          success: false,
+          error: 'Kullanıcı bulunamadı'
+        });
+      }
+
+      if (!user.isActive) {
+        console.log('Auth Debug - Kullanıcı aktif değil:', user.email);
+        return res.status(401).json({
+          success: false,
+          error: 'Hesap aktif değil'
+        });
+      }
+
+      req.user = {
+        userId: decoded.userId,
+        email: decoded.email,
+        isAdmin: decoded.isAdmin || user.isAdmin,
+        role: decoded.role || user.role
+      };
+
+      console.log('Auth Debug - Kimlik doğrulandı:', { 
+        userId: req.user.userId, 
+        email: req.user.email, 
+        isAdmin: req.user.isAdmin 
+      });
+
+      next();
+    } catch (error: any) {
+      console.log('Auth Debug - Token verification error:', error.message);
       return res.status(401).json({
         success: false,
-        error: 'Hesap aktif değil'
+        error: 'Geçersiz token: ' + error.message
       });
     }
-
-    req.user = {
-      userId: decoded.userId,
-      email: decoded.email,
-      isAdmin: decoded.isAdmin || user.isAdmin,
-      role: decoded.role || user.role
-    };
-
-    console.log('Auth Debug - Kimlik doğrulandı:', { 
-      userId: req.user.userId, 
-      email: req.user.email, 
-      isAdmin: req.user.isAdmin 
-    });
-
-    next();
   } catch (error: any) {
-    console.log('Auth Debug - Token verification error:', error.message);
-    return res.status(401).json({
+    console.log('Auth Debug - Outer catch error:', error.message);
+    return res.status(500).json({
       success: false,
-      error: 'Geçersiz token: ' + error.message
+      error: 'Sunucu hatası'
     });
   }
 };
