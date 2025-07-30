@@ -7,6 +7,7 @@ const nextConfig = {
   trailingSlash: true,
   basePath: '/beyond3c',
   assetPrefix: '/beyond3c/',
+  distDir: 'out',
   
   // Include both tsx and ts files for pages and API routes
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
