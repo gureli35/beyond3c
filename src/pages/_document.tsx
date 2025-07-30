@@ -26,7 +26,9 @@ export default function Document() {
         <meta name="bingbot" content="index, follow" />
         
         {/* Icons and Manifest */}
-        <link rel="icon" href="/beyond3c/icons/favicon.ico" />
+        <link rel="icon" href="/beyond3c/favicon.ico" />
+        <link rel="shortcut icon" href="/beyond3c/favicon.ico" />
+        <link rel="icon" type="image/png" href="/beyond3c/2Clogo.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/beyond3c/icons/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/beyond3c/icons/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/beyond3c/icons/favicon-16x16.png" />
