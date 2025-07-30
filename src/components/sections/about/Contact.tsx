@@ -9,37 +9,92 @@ const Contact: React.FC = () => {
     email: '',
     subject: '',
     message: '',
+    phone: '',
+    organization: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    if (errors[e.target.name]) {
+      setErrors({
+        ...errors,
+        [e.target.name]: '',
+      });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: {[key: string]: string} = {};
+    if (!formData.name.trim()) {
+      newErrors.name = t('contact.validation.nameRequired');
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = t('contact.validation.emailRequired');
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = t('contact.validation.emailInvalid');
+    }
+    if (!formData.subject) {
+      newErrors.subject = t('contact.validation.subjectRequired');
+    }
+    if (!formData.message.trim()) {
+      newErrors.message = t('contact.validation.messageRequired');
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
+    
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setIsSubmitted(true);
-    setIsSubmitting(false);
-    
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
+    try {
+      const response = await fetch('/api/contact-notion', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-    }, 3000);
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsSubmitted(true);
+        console.log('✅ Mesaj email olarak gönderildi (About sayfası)');
+        
+        // 3 saniye sonra formu sıfırla
+        setTimeout(() => {
+          setIsSubmitted(false);
+          setFormData({
+            name: '',
+            email: '',
+            subject: '',
+            message: '',
+            phone: '',
+            organization: '',
+          });
+        }, 3000);
+      } else {
+        throw new Error(data.message || 'Mesaj gönderilemedi');
+      }
+    } catch (error) {
+      console.error('❌ Form submission error:', error);
+      setErrors({
+        submit: error instanceof Error ? error.message : 'Bir hata oluştu. Lütfen tekrar deneyin.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -76,12 +131,21 @@ const Contact: React.FC = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <p className="text-white text-lg font-medium">
+                  <p className="text-white text-lg font-medium mb-2">
                     {t('contact.successMessage')}
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    📧 Mesajınız beyond2c@europe.com adresine gönderildi
                   </p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {errors.submit && (
+                    <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+                      <p className="text-red-400 text-sm">{errors.submit}</p>
+                    </div>
+                  )}
+
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-white mb-2">
                       {t('contact.name')} *
@@ -96,6 +160,7 @@ const Contact: React.FC = () => {
                       className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors"
                       placeholder={t('contact.namePlaceholder')}
                     />
+                    {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name}</p>}
                   </div>
 
                   <div>
@@ -111,6 +176,37 @@ const Contact: React.FC = () => {
                       required
                       className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors"
                       placeholder={t('contact.emailPlaceholder')}
+                    />
+                    {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
+                  </div>
+
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium text-white mb-2">
+                      {t('contact.phone')}
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors"
+                      placeholder={t('contact.phonePlaceholder')}
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="organization" className="block text-sm font-medium text-white mb-2">
+                      {t('contact.organization')}
+                    </label>
+                    <input
+                      type="text"
+                      id="organization"
+                      name="organization"
+                      value={formData.organization}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors"
+                      placeholder={t('contact.organizationPlaceholder')}
                     />
                   </div>
 
@@ -135,6 +231,7 @@ const Contact: React.FC = () => {
                       <option value="volunteer">{t('contact.subjects.volunteer')}</option>
                       <option value="feedback">{t('contact.subjects.feedback')}</option>
                     </select>
+                    {errors.subject && <p className="text-red-400 text-sm mt-1">{errors.subject}</p>}
                   </div>
 
                   <div>
@@ -151,6 +248,7 @@ const Contact: React.FC = () => {
                       className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors resize-none"
                       placeholder={t('contact.messagePlaceholder')}
                     />
+                    {errors.message && <p className="text-red-400 text-sm mt-1">{errors.message}</p>}
                   </div>
 
                   <Button
