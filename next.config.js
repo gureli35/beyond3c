@@ -2,8 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   
-  // Simplified config for development
-  output: 'standalone',
+  // GitHub Pages configuration
+  output: 'export',
+  trailingSlash: true,
+  basePath: '/beyond3c',
+  assetPrefix: '/beyond3c/',
   
   // Include both tsx and ts files for pages and API routes
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
