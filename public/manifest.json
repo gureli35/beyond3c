@@ -2,24 +2,24 @@
   "name": "Beyond2C - İklim Eylem Platformu",
   "short_name": "Beyond2C",
   "description": "İklim krizi için harekete geçmek — çok geç olmadan önce. Z kuşağını yerel yönetimlerle buluşturan platform.",
-  "start_url": "/",
+  "start_url": "/beyond3c/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#2D7D46",
   "orientation": "portrait",
-  "scope": "/",
+  "scope": "/beyond3c/",
   "lang": "tr-TR",
   "dir": "ltr",
   "categories": ["environment", "education", "social", "news"],
   "screenshots": [
     {
-      "src": "/images/screenshot-wide.png",
+      "src": "/beyond3c/images/screenshot-wide.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide"
     },
     {
-      "src": "/images/screenshot-mobile.png", 
+      "src": "/beyond3c/images/screenshot-mobile.png", 
       "sizes": "375x667",
       "type": "image/png",
       "form_factor": "narrow"
@@ -27,19 +27,19 @@
   ],
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
-      "sizes": "192x192",
+      "src": "/beyond3c/icons/favicon-32x32.png",
+      "sizes": "32x32",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/icons/icon-512x512.png",
-      "sizes": "512x512", 
+      "src": "/beyond3c/icons/apple-touch-icon.png",
+      "sizes": "180x180",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/2Clogo.png",
+      "src": "/beyond3c/2Clogo.png",
       "sizes": "256x256",
       "type": "image/png",
       "purpose": "any"
@@ -50,10 +50,10 @@
       "name": "Blog",
       "short_name": "Blog",
       "description": "İklim değişikliği hakkında güncel yazılar",
-      "url": "/blog",
+      "url": "/beyond3c/blog",
       "icons": [
         {
-          "src": "/icons/blog-icon.png",
+          "src": "/beyond3c/icons/blog-icon.png",
           "sizes": "96x96"
         }
       ]
@@ -62,10 +62,10 @@
       "name": "Sesler",
       "short_name": "Voices",
       "description": "Gençlerin iklim hikayeleri",
-      "url": "/voices",
+      "url": "/beyond3c/voices",
       "icons": [
         {
-          "src": "/icons/voices-icon.png",
+          "src": "/beyond3c/icons/voices-icon.png",
           "sizes": "96x96"
         }
       ]
@@ -74,10 +74,10 @@
       "name": "Harekete Geç",
       "short_name": "Take Action",
       "description": "İklim eylemine katıl",
-      "url": "/take-action",
+      "url": "/beyond3c/take-action",
       "icons": [
         {
-          "src": "/icons/action-icon.png",
+          "src": "/beyond3c/icons/action-icon.png",
           "sizes": "96x96"
         }
       ]

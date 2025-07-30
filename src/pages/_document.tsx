@@ -26,11 +26,11 @@ export default function Document() {
         <meta name="bingbot" content="index, follow" />
         
         {/* Icons and Manifest */}
-        <link rel="icon" href="/icons/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
-        <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/beyond3c/icons/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/beyond3c/icons/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/beyond3c/icons/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/beyond3c/icons/favicon-16x16.png" />
+        <link rel="manifest" href="/beyond3c/manifest.json" />
         
         {/* Preconnect for Performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
