@@ -73,7 +73,7 @@ const Navigation: React.FC = () => {
             <Link href="/" className="flex items-center group">
               <div className="flex items-center transition-transform duration-300 group-hover:scale-105">
                 <img 
-                  src="/2Clogo.png" 
+                  src={`${process.env.NODE_ENV === 'production' ? '/beyond3c' : ''}/2Clogo.png`}
                   alt="Beyond2C Logo" 
                   className="h-8 w-auto filter brightness-110 hover:brightness-125 transition-all duration-300"
                 />

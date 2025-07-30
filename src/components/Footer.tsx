@@ -34,7 +34,7 @@ const Footer: React.FC = () => {
             <div className="flex items-center space-x-3 mb-6">
               <div className="relative">
                 <img 
-                  src="/2Clogo.png" 
+                  src={`${process.env.NODE_ENV === 'production' ? '/beyond3c' : ''}/2Clogo.png`}
                   alt="Beyond2C Logo" 
                   className="h-10 w-auto filter drop-shadow-lg"
                 />

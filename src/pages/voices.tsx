@@ -232,7 +232,7 @@ const VoicesPage: React.FC = () => {
                 >
                   <div className="relative w-full h-56 overflow-hidden">
                     <img 
-                      src={voice.featuredImage || '/images/default-voice.jpg'} 
+                      src={voice.featuredImage || `${process.env.NODE_ENV === 'production' ? '/beyond3c' : ''}/images/default-voice.jpg`} 
                       alt={voice.title} 
                       className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110 group-hover:saturate-110"
                     />

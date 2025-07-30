@@ -17,7 +17,7 @@ interface EnhancedSEOProps extends SEOProps {
 const SEO: React.FC<EnhancedSEOProps> = ({
   title,
   description,
-  image = '/images/og-image.jpg',
+  image = `${process.env.NODE_ENV === 'production' ? '/beyond3c' : ''}/images/og-image.jpg`,
   url,
   type = 'website',
   keywords = [],

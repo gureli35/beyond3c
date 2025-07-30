@@ -79,7 +79,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         username: post.author.slug
       },
       publishedAt: post.date,
-      image: post.featured_image || '/images/blog-default.jpg',
+      image: post.featured_image || `${process.env.NODE_ENV === 'production' ? '/beyond3c' : ''}/images/blog-default.jpg`,
       featuredImage: post.featured_image,
       category: Object.keys(post.categories).length > 0 ? 
         Object.values(post.categories)[0].name : 'Genel',
